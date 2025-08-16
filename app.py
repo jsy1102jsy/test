@@ -160,6 +160,30 @@ def getPostDetail(num):
     name = user.name
     return render_template('postshow.html',post = post ,isLogin = True, name = name)
 
+@app.route('/deletePost/<int:num>', methods=['DELETE'])
+def deletePost(num):
+    post = Board.query.filter_by(id=num).first()
+    db.session.delete(post)
+    db.session.commit()
+    return jsonify({'success': True, 'message': '게시글이 삭제되었습니다.'}), 200
+
+@app.route('/editPost/<int:num>', methods=['GET', 'POST'])
+def editPost(num):
+    post = Board.query.filter_by(id=num).first()
+    
+    if request.method == 'POST':
+        post.title = request.form['title']
+        post.date = request.form['date']
+        post.time = request.form['time']
+        post.level = request.form['level']
+        post.city = request.form['city']
+        post.detail = request.form['detail']
+        
+        db.session.commit()
+        return redirect(f'/getPostList/{post.id}')
+    
+    return render_template('postreform.html', post=post, isLogin=True)
+
 
 @app.route("/teamlist", methods=['GET'])
 def teamlist():
