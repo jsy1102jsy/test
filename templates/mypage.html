@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>내 정보</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/text.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/btn.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+  <meta charset="utf-8">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: url("/static/images/background.jpg") no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .content {
+      margin-top: 60px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 40px 60px;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      width: 90%;
+      max-width: 600px;
+    }
+
+    .profile-title {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 30px;
+      text-align: center;
+      color: #007BFF;
+    }
+
+    .profile-info {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      font-size: 18px;
+    }
+
+    .profile-info div {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 8px;
+    }
+
+    .profile-info div span:first-child {
+      font-weight: 600;
+      color: #333;
+    }
+
+    .btn-leave {
+      background-color: #dc3545;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      margin-top: 30px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .btn-leave:hover {
+      background-color: #b02a37;
+    }
+
+    #header {
+      width: 100%;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+  </style>
+
+  <script src="{{ url_for('static', filename='js/header.js') }}"></script>
+  <script>
+    function leave() {
+      let ok = confirm("정말 회원탈퇴 하시겠습니까? 지워진 계정 및 게시글은 복구할 수 없습니다.");
+      if (ok) {
+        $.ajax({
+          url: "/leave",
+          type: "POST",
+          success: function (response) {
+            alert(response.message);
+            location.href = "/login";
+          },
+          error: function (response) {
+            if (response.responseJSON && response.responseJSON.message) {
+              alert("에러: " + response.responseJSON.message);
+            } else {
+              alert("알 수 없는 오류가 발생했습니다.");
+            }
+          }
+        });
+      }
+    }
+  </script>
+</head>
+<body>
+  <div id="header"></div>
+
+  <div class="content">
+    <div class="profile-title">내 정보</div>
+
+    {% if user %}
+    <div class="profile-info">
+      <div><span>이름</span><span>{{ user.name }}</span></div>
+      <div><span>이메일</span><span>{{ user.email }}</span></div>
+      <div><span>도시</span><span>{{ user.city or '미입력' }}</span></div>
+    </div>
+    <button class="btn-leave" onclick="leave()">회원 탈퇴</button>
+    {% else %}
+    <p style="text-align:center;">사용자 정보가 없습니다.</p>
+    {% endif %}
+  </div>
+
+  <script>
+    var isLogin = {{ isLogin | tojson }};
+    createHeader(isLogin);
+  </script>
+</body>
+</html>

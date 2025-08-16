@@ -1,0 +1,19 @@
+.text {
+                
+    border: 3px solid #000;
+    border-radius: 5px;
+    height: 35px;
+    line-height: normal;
+    color: #282828;
+    display: block;
+    width: 50%;
+    box-sizing: border-box;
+    user-select: auto;
+    font-size: 16px;
+    padding: 0 6px;
+    padding-left: 12px;
+    :focus{
+        border: 3px solid #5551ff;
+    }
+    
+}

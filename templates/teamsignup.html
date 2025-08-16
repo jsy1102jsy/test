@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>팀 가입 신청</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <meta charset="utf-8" />
+    <style>
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      body {
+        width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px 20px 20px;
+        border: 5px solid black;
+        background: linear-gradient(
+            rgba(255, 255, 255, 0.5),
+            rgba(255, 255, 255, 0.5)
+          ),
+          url("/static/images/background.jpg");
+        background-size: cover;
+      }
+      .header a {
+        text-decoration: none;
+      }
+      .form-container {
+        margin-top: 50px;
+      }
+      textarea {
+        width: 100%;
+        height: 150px;
+        resize: none;
+        padding: 10px;
+        font-size: 16px;
+      }
+      .submit-btn {
+        margin-top: 20px;
+        padding: 10px 20px;
+        font-size: 18px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+    </style>
+    <script src="{{ url_for('static', filename='js/header.js') }}"></script>
+  </head>
+  <body>
+    <h1>팀 가입 신청</h1>
+
+    <div class="form-container">
+      <p><strong>팀 이름:</strong> {{ teamName }}</p>
+
+      <div>
+        <input type="hidden" id="??"name="teamName" value="{{ teamName }}">
+        <label for="introduction">자기소개</label><br>
+        <textarea name="introduction" id="introduction" placeholder="자기소개를 입력해주세요...">
+
+        </textarea>
+        <br>
+        <button type="submit" class="submit-btn" onclick="joinTeam()">가입 신청</button>
+      </div>
+    </div>
+    <script>
+      function joinTeam(){
+        const details = document.getElementById('introduction').value;
+        $.ajax({
+          url: "/join-team",  // 동적으로 URL을  가져옴
+          type: "POST",
+          contentType: "application/json",  // JSON으로 보낸다고 명시
+          data: JSON.stringify({
+              details: details
+            }),
+          success: function(response) {
+              alert('팀 가입 요청을 보냈습니다!');
+              window.location.href = "{{ url_for('teamlist') }}";  // 작성 후 목록으로 이동
+          },
+          })
+        }
+    </script>
+  </body>
+</html>

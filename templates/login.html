@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>로그인 - Match Ball</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/btn.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+      @font-face {
+        font-family: 'HakgyoansimMoheomgaR';
+        src: url('{{ url_for("static", filename="fonts/HakgyoansimMoheomgaR.ttf") }}') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background: #f5f5f5;
+        font-family: 'Segoe UI', Arial, sans-serif;
+        color: #333333;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .login-container {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px 20px;
+        margin-top: 30px;
+      }
+
+      .login-card {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        padding: 50px 40px;
+        width: 100%;
+        max-width: 450px;
+        text-align: center;
+      }
+
+      .login-header {
+        margin-bottom: 40px;
+      }
+
+      .login-header h1 {
+        color: #333333;
+        font-size: 2.5em;
+        font-weight: 700;
+        margin: 0 0 10px 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+      }
+
+      .login-header h1 i {
+        font-size: 1.2em;
+        color: #666666;
+      }
+
+      .login-subtitle {
+        color: #666666;
+        font-size: 1.1em;
+        margin: 0;
+        font-weight: 400;
+      }
+
+      .form-group {
+        margin-bottom: 25px;
+        text-align: left;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333333;
+        font-size: 14px;
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 15px 18px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 16px;
+        font-family: inherit;
+        background: #ffffff;
+        color: #333333;
+        transition: all 0.3s ease;
+        box-sizing: border-box;
+      }
+
+      .form-input:focus {
+        outline: none;
+        border-color: #666666;
+        box-shadow: 0 0 0 3px rgba(102, 102, 102, 0.1);
+      }
+
+      .form-input::placeholder {
+        color: #aaaaaa;
+      }
+
+      .login-btn {
+        width: 100%;
+        padding: 15px 20px;
+        background: #333333;
+        color: #ffffff;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-family: inherit;
+        margin-top: 10px;
+      }
+
+      .login-btn:hover {
+        background: #555555;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .login-btn:active {
+        transform: translateY(0);
+      }
+
+      .error-message {
+        background: #ffebee;
+        color: #c62828;
+        padding: 12px 16px;
+        border-radius: 6px;
+        margin-top: 20px;
+        font-size: 14px;
+        border-left: 4px solid #c62828;
+      }
+
+      .register-link {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #e0e0e0;
+        color: #666666;
+        font-size: 14px;
+      }
+
+      .register-link a {
+        color: #333333;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.2s ease;
+      }
+
+      .register-link a:hover {
+        color: #666666;
+      }
+
+      /* Footer 스타일 */
+      .footer {
+        background: #333333;
+        color: #ffffff;
+        padding: 40px 0;
+        margin-top: 60px;
+        text-align: center;
+      }
+
+      .footer-content {
+        width: 60%;
+        margin: 0 auto;
+        max-width: 800px;
+      }
+
+      .footer-info {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .footer-info p {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.6;
+        color: #cccccc;
+      }
+
+      .copyright {
+        font-weight: 600;
+        color: #ffffff;
+        font-size: 16px;
+        margin-bottom: 5px;
+      }
+
+      .contact {
+        color: #cccccc;
+      }
+
+      .address {
+        color: #aaaaaa;
+      }
+
+      @media (max-width: 768px) {
+        .login-container {
+          padding: 20px 15px;
+          margin-top: 20px;
+        }
+
+        .login-card {
+          padding: 30px 25px;
+        }
+
+        .login-header h1 {
+          font-size: 2em;
+        }
+
+        .footer {
+          padding: 30px 0;
+          margin-top: 40px;
+        }
+
+        .footer-content {
+          width: 95%;
+        }
+
+        .footer-info p {
+          font-size: 13px;
+        }
+
+        .copyright {
+          font-size: 15px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .login-card {
+          padding: 25px 20px;
+        }
+
+        .login-header h1 {
+          font-size: 1.8em;
+        }
+
+        .form-input {
+          padding: 12px 15px;
+          font-size: 15px;
+        }
+
+        .login-btn {
+          padding: 12px 20px;
+          font-size: 15px;
+        }
+      }
+    </style>
+    <script src="{{ url_for('static', filename='js/header.js') }}"></script>
+  </head>
+  <body>
+    <div id="header"></div>
+    
+    <div class="login-container">
+      <div class="login-card">
+        <div class="login-header">
+          <h1><i class="fas fa-futbol"></i> 로그인</h1>
+          <p class="login-subtitle">Match Ball에 오신 것을 환영합니다</p>
+        </div>
+        
+        <form action="/login" method="post">
+          <div class="form-group">
+            <label for="email">이메일</label>
+            <input 
+              type="email" 
+              id="email"
+              class="form-input" 
+              name="email" 
+              placeholder="이메일을 입력해 주세요"
+              required
+            >
+          </div>
+          
+          <div class="form-group">
+            <label for="password">비밀번호</label>
+            <input 
+              type="password" 
+              id="password"
+              class="form-input" 
+              name="pwname" 
+              placeholder="비밀번호를 입력해 주세요"
+              required
+            >
+          </div>
+          
+          <button type="submit" class="login-btn">
+            <i class="fas fa-sign-in-alt"></i> 로그인
+          </button>
+          
+          {% if msg1 %}
+          <div class="error-message">
+            <i class="fas fa-exclamation-triangle"></i> {{msg1}}
+          </div>
+          {% endif %}
+        </form>
+        
+        <div class="register-link">
+          계정이 없으신가요? <a href="/register">회원가입</a>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-info">
+          <p class="copyright">© 2025년 정서윤 Copyright</p>
+          <p class="contact">전화번호: 010-1234-5678</p>
+          <p class="address">주소: 서울시 강남구 xx동 xxx 번지</p>
+        </div>
+      </div>
+    </footer>
+    
+    <script>
+      var isLogin = {{ isLogin | tojson }};
+      createHeader(isLogin);
+    </script>
+  </body>
+</html>

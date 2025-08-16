@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>팀 생성</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+    <meta   charset="utf-8" />
+    <style>
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+       body {
+        display:flex;
+        justify-content: center;
+        align-items:center;
+        flex-direction: column;
+        width: 100%;
+        margin: 0 auto;
+        background: url("/static/images/background.jpg");
+        background-size: cover;
+      }
+      .content {
+        width: 70%;
+        height: 100%;;
+        background: rgba(255, 255, 255, 0.8);
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 선택: 부드러운 그림자 */
+      }
+      .large-text {
+        font-size: 200%;
+        font-weight: bold; 
+      }
+      .header a {
+        text-decoration: none;
+      }
+      .post_title{
+        font-size: 400%;
+        margin-left: 20px;
+      }
+    </style>
+    <script src="{{ url_for('static', filename='js/header.js') }}"></script>
+  </head>
+<body>
+  <div id="header"></div>
+  <div class="content">
+    <h1 style="text-align:center; font-size: 2.2em; margin-bottom: 30px;">게시글 정보</h1>
+
+    {% if post %}
+    <div class="post_title">{{ post.title }}</div>
+
+    <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+  <tr style="background-color: #f9f9f9;">
+    <td style="padding: 12px;"><strong>닉네임:</strong> {{ name }}</td>
+    <td style="padding: 12px;"><strong>제목:</strong> {{ post.title }}</td>
+  </tr>
+  <tr>
+    <td style="padding: 12px;"><strong>날짜:</strong> {{ post.date }}</td>
+    <td style="padding: 12px;"><strong>시간:</strong> {{ post.time }}</td>
+  </tr>
+  <tr style="background-color: #f9f9f9;">
+    <td style="padding: 12px;"><strong>레벨:</strong> {{ post.level }}</td>
+    <td style="padding: 12px;"><strong>지역:</strong> {{ post.city }}</td>
+  </tr>
+  <tr>
+    <td colspan="2" style="padding: 16px; background-color: #fff;">
+      <div style="margin-top: 8px; white-space: pre-wrap;">{{ post.detail }}</div>
+    </td>
+  </tr>
+</table>
+    {% else %}
+    <p style="text-align: center; font-size: 1.2em;">게시글이 없습니다.</p>
+    {% endif %}
+  </div>
+
+  <script>
+    var isLogin = {{ isLogin | tojson }};
+    createHeader(isLogin);
+  </script>
+</body>
+</html>

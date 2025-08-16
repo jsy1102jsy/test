@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>팀 정보</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <meta charset="utf-8" />
+    <style>
+      :root {
+        --primary-color: #4CAF50;
+        --text-primary: #333;
+        --text-secondary: #666;
+        --bg-light: #f8f8f8;
+        --border-color: #ddd;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        background: url("/static/images/background.jpg") no-repeat center center fixed;
+        background-size: cover;
+        font-family: 'Segoe UI', Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .content {
+        width: 90%;
+        max-width: 1000px;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 30px;
+        margin: 20px auto;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 30px;
+        color: var(--text-primary);
+        font-size: 2em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      h1 i {
+        color: var(--primary-color);
+      }
+
+      .team-header {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid var(--border-color);
+      }
+
+      .logo-img {
+        width: 120px;
+        height: 120px;
+        border-radius: 12px;
+        object-fit: cover;
+        border: 2px solid var(--border-color);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .team-name {
+        font-size: 2.5em;
+        font-weight: bold;
+        color: var(--text-primary);
+        margin: 0;
+      }
+
+      .team-info {
+        background: var(--bg-light);
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+
+      .info-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 15px 0;
+        padding: 10px;
+        background: white;
+        border-radius: 6px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+      }
+
+      .info-row i {
+        width: 24px;
+        color: var(--primary-color);
+        font-size: 1.1em;
+      }
+
+      .info-row strong {
+        color: var(--text-primary);
+        min-width: 80px;
+      }
+
+      .info-row span {
+        color: var(--text-secondary);
+      }
+
+      .team-detail {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 20px;
+        line-height: 1.6;
+      }
+
+      .team-detail i {
+        color: var(--primary-color);
+        margin-right: 8px;
+      }
+
+      .join-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 24px;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 1.1em;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 20px;
+      }
+
+      .join-btn:hover {
+        background-color: #45a049;
+        transform: translateY(-2px);
+      }
+
+      .join-btn i {
+        font-size: 1.2em;
+      }
+
+      @media (max-width: 768px) {
+        .content {
+          width: 95%;
+          padding: 20px;
+        }
+
+        .team-header {
+          flex-direction: column;
+          text-align: center;
+          gap: 15px;
+        }
+
+        .team-name {
+          font-size: 2em;
+        }
+
+        .info-row {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 5px;
+        }
+      }
+    </style>
+    <script src="{{ url_for('static', filename='js/header.js') }}"></script>
+  </head>
+  <body>
+    <div id="header"></div>
+    <div class="content">
+      <h1><i class="fas fa-users"></i> 팀 정보</h1>
+      {% if team %}
+        <div class="team-header">
+          <img src="{{ url_for('files', filename=team.file_name) }}" alt="팀 로고" class="logo-img"/>
+          <h2 class="team_name">{{team.name}}</h2>
+        </div>
+
+        <div class="team-info">
+          <div class="info-row">
+            <i class="fas fa-map-marker-alt"></i>
+            <strong>지역:</strong>
+            <span>{{ team.city }}</span>
+          </div>
+          <div class="info-row">
+            <i class="fas fa-trophy"></i>
+            <strong>레벨:</strong>
+            <span>{{ team.level }}</span>
+          </div>
+          <div class="info-row">
+            <i class="fas fa-user-friends"></i>
+            <strong>인원 수:</strong>
+            <span>{{ team.people }}명</span>
+          </div>
+          <div class="info-row">
+            <i class="fas fa-users"></i>
+            <strong>구성원:</strong>
+            <span>{{team.member}}</span>
+          </div>
+        </div>
+
+        <div class="team-detail">
+          <i class="fas fa-info-circle"></i>
+          <strong>팀 소개</strong>
+          <p>{{ team.detail }}</p>
+        </div>
+
+        <button class="join-btn" onclick="goToJoinTeam()">
+          <i class="fas fa-user-plus"></i>
+          가입 신청
+        </button>
+      {% else %}
+        <div class="empty-message">
+          <i class="fas fa-exclamation-circle"></i>
+          팀 정보를 찾을 수 없습니다.
+        </div>
+      {% endif %}
+    </div>
+
+    <script>
+      var isLogin = {{ isLogin | tojson }};
+      createHeader(isLogin);
+      
+      function goToJoinTeam(){
+        teamName = document.getElementsByClassName('team_name')[0].innerText;
+        window.location.href="/join-team?teamName="+teamName;
+      }
+    </script>      
+  </body>
+</html>
