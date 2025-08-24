@@ -7,8 +7,8 @@ class Team(db.Model):
     level = db.Column(db.String(20), nullable=False)
     city = db.Column(db.Integer, nullable=False)
     people = db.Column(db.Integer, nullable=False)
-    detail = db.Column(db.String(20), nullable=True)
-    file_name = db.Column(db.String(20), nullable=True)
+    detail = db.Column(db.String(300), nullable=True)
+    file_name = db.Column(db.String(100), nullable=True)
     #memeber = db.Column(db.Interger, nullable = True)
     leader_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), unique=True, nullable=False)
     leader = db.relationship('User', backref=db.backref('team', uselist=False, cascade='all, delete', passive_deletes=True))
@@ -28,16 +28,20 @@ class Board(db.Model): #Board N
     date = db.Column(db.String(15), nullable=False)
     time = db.Column(db.String(15), nullable=False)
     level = db.Column(db.String(15), nullable=False)
-    title = db.Column(db.String(15), nullable=False)
+    title = db.Column(db.String(100), nullable=False)
     detail = db.Column(db.String(300), nullable=False)
     city = db.Column(db.String(30), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
-    
+    created_at = db.Column(db.DateTime, default=db.func.now()) #자동 생성 시간 기록
+    updated_at = db.Column(db.DateTime, default=db.func.now(), onupdate=db.func.now()) #자동 수정 시간 기록
+    lat = db.Column(db.Float, nullable=True)
+    lng = db.Column(db.Float, nullable=True)
 
 
 #가입 신청 대기열
 class JoinList(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.Integer)
+    email = db.Column(db.String(30), nullable=False)
     details = db.Column(db.String(300), nullable=False)    
-    #team_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
+    team_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)

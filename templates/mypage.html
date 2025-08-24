@@ -76,6 +76,26 @@
       background-color: #b02a37;
     }
 
+    .btn-my-posts {
+      background-color: #007BFF;
+      color: white;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      text-decoration: none;
+      display: inline-block;
+      margin-bottom: 20px;
+    }
+
+    .btn-my-posts:hover {
+      background-color: #0056b3;
+      color: white;
+      text-decoration: none;
+    }
+
     #header {
       width: 100%;
       position: sticky;
@@ -119,6 +139,9 @@
       <div><span>이름</span><span>{{ user.name }}</span></div>
       <div><span>이메일</span><span>{{ user.email }}</span></div>
       <div><span>도시</span><span>{{ user.city or '미입력' }}</span></div>
+    </div>
+    <div style="text-align: center; margin-top: 30px;">
+      <a href="/myposts" class="btn-my-posts">나의 글</a>
     </div>
     <button class="btn-leave" onclick="leave()">회원 탈퇴</button>
     {% else %}

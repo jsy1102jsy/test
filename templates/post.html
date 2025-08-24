@@ -577,11 +577,11 @@
           <div class="date-time-group">
             <div class="date-time-wrapper">
               <i class="fas fa-calendar-day"></i>
-              <input name="date" type="date" value="xxx" min="yyy" max="zzz">
+              <input name="date" type="date" required>
             </div>
             <div class="date-time-wrapper">
               <i class="fas fa-clock"></i>
-              <input type="time" name="time" step="1800" min="00:00" max="23:30" title="30분 단위로 시간을 선택하세요">
+              <input type="time" name="time" step="1800" min="00:00" max="23:30" title="30분 단위로 시간을 선택하세요" required>
             </div>
           </div>
         </div>
@@ -621,6 +621,7 @@
         <div class="form-group">
           <label><i class="fas fa-map-marked-alt"></i> 장소</label>
           <div class="btn-open-modal"><i class="fas fa-map-marked-alt"></i> 장소 선택</div>
+          
           <div class="selected-place">
             <i class="fas fa-map-marker-alt"></i>
             <span id="selected-place-text">현재 장소: 선택된 장소가 없습니다</span>
@@ -643,6 +644,9 @@
         {% endif %}
       </form>
     </div>
-    <script>var isLogin = {{ isLogin | tojson }};createHeader(isLogin);</script>
+    <script>
+      var isLogin = {{ isLogin | tojson }};
+      createHeader(isLogin);
+    </script>
   </body>
 </html>

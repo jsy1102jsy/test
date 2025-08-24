@@ -51,12 +51,20 @@
       .filter-section {
         display: flex;
         align-items: center;
+        justify-content: space-between;
         gap: 20px;
         margin: 30px 0;
         padding: 20px;
         background: #f8f8f8;
         border-radius: 8px;
         flex-wrap: wrap;
+      }
+
+      .filter-controls {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-left: auto;
       }
 
       .filter-group {
@@ -143,6 +151,12 @@
 
         .filter-group {
           min-width: auto;
+        }
+
+        .filter-controls {
+          margin-left: 0;
+          justify-content: center;
+          width: 100%;
         }
 
         .filter-btn, .reset-btn {
@@ -379,14 +393,6 @@
         font-size: 13px;
       }
 
-      /* 조회수 컬럼 스타일 */
-      td:last-child {
-        text-align: center;
-        color: #888888;
-        font-weight: 500;
-        width: 80px;
-      }
-
       @media (max-width: 1200px) {
         .content {
           width: 95%;
@@ -437,54 +443,58 @@
           <!-- 필터링 섹션 -->
           <div class="filter-section">
             <div class="filter-group">
+              <label for="region-filter">지역</label>
               <select id="region-filter" class="filter-select">
                 <option value="">전체 지역</option>
-                <option value="서울">서울</option>
-                <option value="부산">부산</option>
-                <option value="대구">대구</option>
-                <option value="인천">인천</option>
-                <option value="광주">광주</option>
-                <option value="대전">대전</option>
-                <option value="울산">울산</option>
-                <option value="세종">세종</option>
-                <option value="경기">경기</option>
-                <option value="강원">강원</option>
-                <option value="충북">충북</option>
-                <option value="충남">충남</option>
-                <option value="전북">전북</option>
-                <option value="전남">전남</option>
-                <option value="경북">경북</option>
-                <option value="경남">경남</option>
-                <option value="제주">제주</option>
+                <option value="서울" {% if region_filter == "서울" %}selected{% endif %}>서울</option>
+                <option value="부산" {% if region_filter == "부산" %}selected{% endif %}>부산</option>
+                <option value="대구" {% if region_filter == "대구" %}selected{% endif %}>대구</option>
+                <option value="인천" {% if region_filter == "인천" %}selected{% endif %}>인천</option>
+                <option value="광주" {% if region_filter == "광주" %}selected{% endif %}>광주</option>
+                <option value="대전" {% if region_filter == "대전" %}selected{% endif %}>대전</option>
+                <option value="울산" {% if region_filter == "울산" %}selected{% endif %}>울산</option>
+                <option value="세종" {% if region_filter == "세종" %}selected{% endif %}>세종</option>
+                <option value="경기" {% if region_filter == "경기" %}selected{% endif %}>경기</option>
+                <option value="강원" {% if region_filter == "강원" %}selected{% endif %}>강원</option>
+                <option value="충북" {% if region_filter == "충북" %}selected{% endif %}>충북</option>
+                <option value="충남" {% if region_filter == "충남" %}selected{% endif %}>충남</option>
+                <option value="전북" {% if region_filter == "전북" %}selected{% endif %}>전북</option>
+                <option value="전남" {% if region_filter == "전남" %}selected{% endif %}>전남</option>
+                <option value="경북" {% if region_filter == "경북" %}selected{% endif %}>경북</option>
+                <option value="경남" {% if region_filter == "경남" %}selected{% endif %}>경남</option>
+                <option value="제주" {% if region_filter == "제주" %}selected{% endif %}>제주</option>
               </select>
             </div>
             
             <div class="filter-group">
+              <label for="date-filter">기간</label>
               <select id="date-filter" class="filter-select">
                 <option value="">전체 기간</option>
-                <option value="today">오늘</option>
-                <option value="week">이번 주</option>
-                <option value="month">이번 달</option>
-                <option value="3months">최근 3개월</option>
+                <option value="today" {% if date_filter == "today" %}selected{% endif %}>오늘</option>
+                <option value="week" {% if date_filter == "week" %}selected{% endif %}>이번 주</option>
+                <option value="month" {% if date_filter == "month" %}selected{% endif %}>이번 달</option>
+                <option value="3months" {% if date_filter == "3months" %}selected{% endif %}>최근 3개월</option>
               </select>
             </div>
             
             <div class="filter-group">
+              <label for="sort-filter">정렬</label>
               <select id="sort-filter" class="filter-select">
-                <option value="latest">최신순</option>
-                <option value="oldest">오래된순</option>
-                <option value="views">조회수순</option>
-                <option value="title">제목순</option>
+                <option value="latest" {% if sort_filter == "latest" %}selected{% endif %}>최신순</option>
+                <option value="oldest" {% if sort_filter == "oldest" %}selected{% endif %}>오래된순</option>
+                <option value="title" {% if sort_filter == "title" %}selected{% endif %}>제목순</option>
               </select>
             </div>
             
-            <button class="filter-btn" onclick="applyFilters()">
-              <span class="btn-icon">⚙️</span>필터 적용
-            </button>
-            
-            <button class="reset-btn" onclick="resetFilters()">
-              <span class="btn-icon">🔄</span>초기화
-            </button>
+            <div class="filter-controls">
+              <button class="filter-btn" onclick="applyFilters()">
+                <span class="btn-icon">⚙️</span>필터 적용
+              </button>
+              
+              <button class="reset-btn" onclick="resetFilters()">
+                <span class="btn-icon">🔄</span>초기화
+              </button>
+            </div>
           </div>
           
           <table>
@@ -493,8 +503,8 @@
           <th>번호</th>
           <th>제목</th>
           <th>작성자</th>
-          <th>날짜</th>
-          <th>조회수</th>
+          <th>경기일</th>
+          <th>작성일</th>
         </tr>
       </thead>
       <tbody>
@@ -503,14 +513,14 @@
             <tr onclick="location.href='/getPostList/{{ post.id }}'">
               <td>{{ loop.index }}</td>
               <td><a href="/getPostList/{{ post.id }}" class="post-link">{{ post.title }}</a></td>
-              <td>{{ names[loop.index] }}</td>
+              <td>{{ names[loop.index0] }}</td>
               <td>{{ post.date }}</td>
-              <td>{{ post.views }}</td>
+              <td>{{ post.created_at }}</td>
             </tr>
           {% endfor %}
         {% else %}
           <tr>
-            <td colspan="5" style="text-align:center;">게시글이 없습니다.</td>
+            <td colspan="4" style="text-align:center;">게시글이 없습니다.</td>
           </tr>
         {% endif %}
       </tbody>

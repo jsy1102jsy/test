@@ -305,7 +305,7 @@
                 {{ current_user_team.name }}
               </div>
             </td>
-            <td>{{ current_user_team.city or '미입력' }}</td>
+            <td>{{ current_user_team.city_display or '미입력' }}</td>
             <td>{{ current_user_team.level or '미입력' }}</td>
             <td>{{ current_user_team.people or 0 }}명</td>
             <td>
@@ -355,7 +355,7 @@
                 {{ team.name }}
               </div>
             </td>
-            <td>{{ team.city or '미입력' }}</td>
+            <td>{{ team.city_display or '미입력' }}</td>
             <td>{{ team.level or '미입력' }}</td>
             <td>{{ team.people or 0 }}명</td>
             <td>
