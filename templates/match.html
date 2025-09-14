@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>경기 신청</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <meta charset="utf-8"/>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #f5f5f5;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      color: #333333;
+    }
+    .content {
+      width: 60%;
+      margin: 40px auto;
+      padding: 40px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    h1 {
+      text-align: center;
+      font-size: 2.3em;
+      font-weight: 700;
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    h1 i {
+      color: #666;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #333;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1em;
+    }
+    textarea {
+      resize: none;
+      height: 120px;
+    }
+    .submit-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: #333;
+      color: #fff;
+      border: none;
+      padding: 15px 30px;
+      font-size: 1.1em;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .submit-btn:hover {
+      background: #555;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    .footer {
+      background: #333333;
+      color: #ffffff;
+      padding: 30px 0;
+      margin-top: 60px;
+      text-align: center;
+    }
+    .footer p {
+      margin: 5px 0;
+      font-size: 14px;
+      color: #ccc;
+    }
+  </style>
+  <script src="{{ url_for('static', filename='js/header.js') }}"></script>
+</head>
+<body>
+  <div id="header"></div>
+  <div class="content">
+    <h1><i class="fas fa-futbol"></i> 경기 신청</h1>
+    <form id="matchForm">
+      <div class="form-group">
+  <label>상대 팀</label>
+  <input type="text" value="{{ teamName }}" readonly>
+</div>
+
+{% if user_team %}
+<div class="form-group">
+  <label>세부 내용</label>
+  <textarea name="details" placeholder="경기 장소, 조건 등을 입력하세요."></textarea>
+</div>
+<button type="submit" class="submit-btn">
+  <i class="fas fa-paper-plane"></i> 신청하기
+</button>
+{% else %}
+<p style="color:red; font-weight:bold;">현재 가입한 팀이 없습니다.</p>
+{% endif %}
+
+  </div>
+  <footer class="footer">
+    <p>© 2025년 정서윤 Copyright</p>
+    <p>전화번호: 010-1234-5678</p>
+    <p>주소: 서울시 강남구 xx동 xxx 번지</p>
+  </footer>
+  <script>
+    var isLogin = {{ isLogin | tojson }};
+    createHeader(isLogin);
+
+    document.getElementById("matchForm").addEventListener("submit", function(e){
+      e.preventDefault();
+      const details = this.details.value;
+      const teamName = "{{ teamName }}";
+      fetch("/match-request", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({details: details, teamName: teamName})
+      }).then(res => res.json())
+        .then(data => {
+          alert(data.MSG);
+          if(data.status === "success"){
+            window.location.href = "/";
+          }
+        });
+    });
+  </script>
+</body>
+</html>

@@ -35,8 +35,6 @@ function createHeader(isLogin) {
 
   if (isLogin) {
     centerNav.appendChild(makeButtonLink('글쓰기', '/board'));
-    centerNav.appendChild(makeButtonLink('팀 생성', '/team'));
-  
   }
 
   // ===== 오른쪽 버튼들 =====

@@ -1,6 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
-
 class Team(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(30), nullable=False)
@@ -9,10 +8,20 @@ class Team(db.Model):
     people = db.Column(db.Integer, nullable=False)
     detail = db.Column(db.String(300), nullable=True)
     file_name = db.Column(db.String(100), nullable=True)
-    #memeber = db.Column(db.Interger, nullable = True)
-    leader_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), unique=True, nullable=False)
-    leader = db.relationship('User', backref=db.backref('team', uselist=False, cascade='all, delete', passive_deletes=True))
 
+    # 리더: User와 1:1
+    leader_id = db.Column(
+        db.Integer,
+        db.ForeignKey('user.id', ondelete='CASCADE'),
+        unique=True,
+        nullable=False
+    )
+    leader = db.relationship(
+        'User',
+        backref=db.backref('leading_team', uselist=False, passive_deletes=True)
+    )
+    members = db.relationship('Member', back_populates='team', cascade='all, delete')
+    
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -20,7 +29,9 @@ class User(db.Model):
     name = db.Column(db.String(30), nullable=False)
     email = db.Column(db.String(30), nullable=False)
     city = db.Column(db.String(30), nullable=False)
+    memberships = db.relationship('Member', back_populates='user', cascade='all, delete')
     boards = db.relationship('Board', backref='author', cascade='all, delete', passive_deletes=True)
+
 
 
 class Board(db.Model): #Board N
@@ -45,3 +56,21 @@ class JoinList(db.Model):
     details = db.Column(db.String(300), nullable=False)    
     team_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
+    
+class Member(db.Model):
+    """ User - Team 다대다 관계를 풀어내는 테이블 """
+    id = db.Column(db.Integer, primary_key=True)
+    team_id = db.Column(db.Integer, db.ForeignKey('team.id', ondelete='CASCADE'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
+    team = db.relationship('Team', back_populates='members')
+    user = db.relationship('User', back_populates='memberships')
+
+class Match(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    team_id = db.Column(db.Integer, db.ForeignKey('team.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    details = db.Column(db.String(500))
+
+
+
+

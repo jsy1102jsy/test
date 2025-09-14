@@ -164,6 +164,13 @@
         line-height: 1.8;
       }
 
+      .button-group {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+        flex-wrap: wrap;
+      }
+
       .join-btn {
         display: inline-flex;
         align-items: center;
@@ -177,7 +184,6 @@
         font-weight: 600;
         cursor: pointer;
         transition: all 0.3s ease;
-        margin-top: 30px;
         text-decoration: none;
         font-family: inherit;
       }
@@ -295,6 +301,10 @@
           padding: 20px;
         }
 
+        .button-group {
+          flex-direction: column;
+        }
+
         .join-btn {
           width: 100%;
           justify-content: center;
@@ -339,15 +349,14 @@
               <strong>레벨</strong>
               <span>{{ team.level }}</span>
             </div>
-            <div class="info-card">
-              <i class="fas fa-user-friends"></i>
-              <strong>인원 수</strong>
-              <span>{{ team.people }}명</span>
-            </div>
+         
             <div class="info-card">
               <i class="fas fa-users"></i>
-              <strong>구성원</strong>
-              <span>{{team.member}}</span>
+              <strong>구성원 {% for user in users %}
+              {{user['name']}}
+              {%endfor%} </strong>
+              <strong>
+              </strong>
             </div>
           </div>
         </div>
@@ -360,10 +369,18 @@
           <p>{{ team.detail }}</p>
         </div>
 
-        <button class="join-btn" onclick="goToJoinTeam()">
-          <i class="fas fa-user-plus"></i>
-          가입 신청
-        </button>
+        <!-- 버튼 그룹 -->
+        <div class="button-group">
+          <button class="join-btn" onclick="goToJoinTeam()">
+            <i class="fas fa-user-plus"></i>
+            가입 신청
+          </button>
+
+          <button class="join-btn" onclick="goToMatchRequest()">
+            <i class="fas fa-futbol"></i>
+            경기 신청
+          </button>
+        </div>
       {% else %}
         <div class="empty-message">
           <i class="fas fa-exclamation-circle"></i>
@@ -388,8 +405,13 @@
       createHeader(isLogin);
       
       function goToJoinTeam(){
-        teamName = document.getElementsByClassName('team_name')[0].innerText;
+        let teamName = document.getElementsByClassName('team_name')[0].innerText;
         window.location.href="/join-team?teamName="+teamName;
+      }
+
+      function goToMatchRequest(){
+        let teamName = document.getElementsByClassName('team_name')[0].innerText;
+        window.location.href="/match-request?teamName="+teamName;
       }
     </script>      
   </body>
