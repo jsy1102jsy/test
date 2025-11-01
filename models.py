@@ -25,7 +25,7 @@ class Team(db.Model):
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    password = db.Column(db.String(30), nullable=False)
+    password = db.Column(db.String(300), nullable=False)
     name = db.Column(db.String(30), nullable=False)
     email = db.Column(db.String(30), nullable=False)
     city = db.Column(db.String(30), nullable=False)
@@ -56,6 +56,7 @@ class JoinList(db.Model):
     details = db.Column(db.String(300), nullable=False)    
     team_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
+    created_at = db.Column(db.DateTime, default=db.func.now()) 
     
 class Member(db.Model):
     """ User - Team 다대다 관계를 풀어내는 테이블 """
@@ -70,6 +71,7 @@ class Match(db.Model):
     team_id = db.Column(db.Integer, db.ForeignKey('team.id'))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     details = db.Column(db.String(500))
+    created_at = db.Column(db.DateTime, default=db.func.now())
 
 
 

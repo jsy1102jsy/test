@@ -95,22 +95,21 @@
     <h1><i class="fas fa-futbol"></i> 경기 신청</h1>
     <form id="matchForm">
       <div class="form-group">
-  <label>상대 팀</label>
-  <input type="text" value="{{ teamName }}" readonly>
-</div>
-
-{% if user_team %}
-<div class="form-group">
-  <label>세부 내용</label>
-  <textarea name="details" placeholder="경기 장소, 조건 등을 입력하세요."></textarea>
-</div>
-<button type="submit" class="submit-btn">
-  <i class="fas fa-paper-plane"></i> 신청하기
-</button>
-{% else %}
-<p style="color:red; font-weight:bold;">현재 가입한 팀이 없습니다.</p>
-{% endif %}
-
+        <label>상대 팀</label>
+        <input type="text" value="{{ teamName }}" readonly>
+      </div>
+      {% if user_team %}
+      <div class="form-group">
+        <label>세부 내용</label>
+        <textarea name="details" placeholder="경기 장소, 조건 등을 입력하세요."></textarea>
+      </div>
+      <button type="submit" class="submit-btn">
+      <i class="fas fa-paper-plane"></i> 신청하기
+      </button>
+      {% else %}
+      <p style="color:red; font-weight:bold;">현재 가입한 팀이 없습니다.</p>
+      {% endif %}
+    </form>
   </div>
   <footer class="footer">
     <p>© 2025년 정서윤 Copyright</p>
@@ -120,7 +119,6 @@
   <script>
     var isLogin = {{ isLogin | tojson }};
     createHeader(isLogin);
-
     document.getElementById("matchForm").addEventListener("submit", function(e){
       e.preventDefault();
       const details = this.details.value;

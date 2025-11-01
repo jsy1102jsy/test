@@ -155,6 +155,8 @@
       <div><span>이름</span><span>{{ user.name }}</span></div>
       <div><span>이메일</span><span>{{ user.email }}</span></div>
       <div><span>도시</span><span>{{ user.city or '미입력' }}</span></div>
+      {%if my_team%}<div><span>팀</span><span>{{my_team.name }}</span></div>{%endif%}
+    
     </div>
     <div class="btn-area">
       <a href="/myposts" class="btn-action btn-my-posts">나의 글</a>

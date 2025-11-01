@@ -12,181 +12,190 @@
         v: "weekly",
       });
     </script>
-  
-<script>
-  let map;
-  let marker;
-  let selectedPlace = '';
-  
-  async function initMap() {
-    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
-    const { Map } = await google.maps.importLibrary("maps");
-    const { Place } = await google.maps.importLibrary("places");
-    
-    map = new Map(document.getElementById("map"), {
-      center: { lat: 37.5665, lng: 126.9780 }, // 서울 중심 좌표
-      zoom: 13,
-      mapId: 'asdfasd',
-    });
-    
-    marker = new AdvancedMarkerElement({
-      map,
-      position: { lat: 37.5665, lng: 126.9780 },
-    });
-  }
-
-  // 시간 선택 관련 코드
-  function setupTimeInput() {
-    const timeInput = document.querySelector('input[name="time"]');
-    const timeWrapper = timeInput.parentElement;
-    
-    // 커스텀 시간 선택기 생성
-    const customTimeSelect = document.createElement('select');
-    customTimeSelect.className = 'custom-time-select';
-    customTimeSelect.style.cssText = timeInput.style.cssText;
-    
-    // 30분 단위로 시간 옵션 생성
-    for (let hour = 0; hour < 24; hour++) {
-      for (let minute of [0, 30]) {
-        const option = document.createElement('option');
-        const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-        option.value = timeString;
-        option.textContent = timeString;
-        customTimeSelect.appendChild(option);
+    <script>
+      let map;
+      let marker;
+      let selectedPlace = '';
+      
+      async function initMap() {
+        const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+        const { Map } = await google.maps.importLibrary("maps");
+        const { Place } = await google.maps.importLibrary("places");
+        
+        map = new Map(document.getElementById("map"), {
+          center: { lat: 37.5665, lng: 126.9780 }, // 서울 중심 좌표
+          zoom: 13,
+          mapId: 'asdfasd',
+        });
+        
+        marker = new AdvancedMarkerElement({
+          map,
+          position: { lat: 37.5665, lng: 126.9780 },
+        });
       }
-    }
 
-    // 현재 시간을 30분 단위로 반올림하여 선택
-    const now = new Date();
-    const minutes = now.getMinutes();
-    const roundedMinutes = Math.round(minutes / 30) * 30;
-    now.setMinutes(roundedMinutes);
-    const currentTime = now.toTimeString().slice(0, 5);
-    customTimeSelect.value = currentTime;
-    timeInput.value = currentTime;
-
-    // 커스텀 선택기 이벤트 처리
-    customTimeSelect.addEventListener('change', function(e) {
-      timeInput.value = e.target.value;
-    });
-
-    // 기존 입력 필드 숨기고 커스텀 선택기 표시
-    timeInput.style.display = 'none';
-    timeWrapper.appendChild(customTimeSelect);
-
-    // 스타일 추가
-    const style = document.createElement('style');
-    style.textContent = `
-      .custom-time-select {
-        width: 100%;
-        padding: 8px 12px 8px 36px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        font-size: 14px;
-        appearance: none;
-        background: #fff;
-        cursor: pointer;
-      }
-      .custom-time-select:focus {
-        border-color: #666;
-        outline: none;
-      }
-    `;
-    document.head.appendChild(style);
-  }
-
-  window.onload = function() {
-    initMap();
-    setupModalEvents();
-    setupTimeInput();
-  }
-
-  function setupModalEvents() {
-    const modal = document.querySelector('.modal');
-    const btnOpenModal = document.querySelector('.btn-open-modal');
-    const btnCloseModal = document.querySelector('.btn-close-modal');
-
-    if (btnOpenModal) {
-      btnOpenModal.addEventListener("click", () => {
-        modal.style.display = "flex";
-        // 모달이 열릴 때 지도 리사이즈
-        if (map) {
-          google.maps.event.trigger(map, 'resize');
+      // 시간 선택 관련 코드
+      function setupTimeInput() {
+        const timeInput = document.querySelector('input[name="time"]');
+        const timeWrapper = timeInput.parentElement;
+        
+        // 커스텀 시간 선택기 생성
+        const customTimeSelect = document.createElement('select');
+        customTimeSelect.className = 'custom-time-select';
+        customTimeSelect.style.cssText = timeInput.style.cssText;
+        
+        // 30분 단위로 시간 옵션 생성
+        for (let hour = 0; hour < 24; hour++) {
+          for (let minute of [0, 30]) {
+            const option = document.createElement('option');
+            const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+            option.value = timeString;
+            option.textContent = timeString;
+            customTimeSelect.appendChild(option);
+          }
         }
-      });
-    }
 
-    if (btnCloseModal) {
-      btnCloseModal.addEventListener("click", () => {
-        modal.style.display = "none";
-      });
-    }
+        // 현재 시간을 30분 단위로 반올림하여 선택
+        const now = new Date();
+        const minutes = now.getMinutes();
+        const roundedMinutes = Math.round(minutes / 30) * 30;
+        now.setMinutes(roundedMinutes);
+        const currentTime = now.toTimeString().slice(0, 5);
+        customTimeSelect.value = currentTime;
+        timeInput.value = currentTime;
 
-    if (modal) {
-      modal.addEventListener("click", (e) => {
-        if (e.target === modal) {
-          modal.style.display = "none";
+        // 커스텀 선택기 이벤트 처리
+        customTimeSelect.addEventListener('change', function(e) {
+          timeInput.value = e.target.value;
+        });
+
+        // 기존 입력 필드 숨기고 커스텀 선택기 표시
+        timeInput.style.display = 'none';
+        timeWrapper.appendChild(customTimeSelect);
+
+        // 스타일 추가
+        const style = document.createElement('style');
+        style.textContent = `
+          .custom-time-select {
+            width: 100%;
+            padding: 8px 12px 8px 36px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            appearance: none;
+            background: #fff;
+            cursor: pointer;
+          }
+          .custom-time-select:focus {
+            border-color: #666;
+            outline: none;
+          }
+        `;
+        document.head.appendChild(style);
+      }
+
+      window.onload = function() {
+        initMap();
+        setupModalEvents();
+        setupTimeInput();
+      }
+
+      function setupModalEvents() {
+        const modal = document.querySelector('.modal');
+        const btnOpenModal = document.querySelector('.btn-open-modal');
+        const btnCloseModal = document.querySelector('.btn-close-modal');
+
+        if (btnOpenModal) {
+          btnOpenModal.addEventListener("click", () => {
+            modal.style.display = "flex";
+            // 모달이 열릴 때 지도 리사이즈
+            if (map) {
+              google.maps.event.trigger(map, 'resize');
+            }
+          });
         }
-      });
-    }
-  }
 
-  async function searchPlace() {
-    var searchPlace = document.getElementById("search-place");
-    searchPlace.innerHTML = "";
-    var searchText = document.getElementById("place").value;
-    const { Place } = await google.maps.importLibrary("places");
-    const request = {
-      textQuery: searchText,
-      fields: ["displayName", "location", "businessStatus"],
-      locationBias: { lat: 37.5665, lng: 126.9780 },
-      language: "ko-KR",
-      maxResultCount: 8,
-    };
-    const { places } = await Place.searchByText(request);
-    
-    places.forEach(place => {
-      const resultDiv = document.createElement('div');
-      resultDiv.className = 'search-result';
-      resultDiv.innerHTML = `
-        <div class="place-name">${place.displayName}</div>
-        <button class="select-btn" onclick="selectPlace('${place.displayName}', ${place.location.lat()}, ${place.location.lng()})">선택</button>
-      `;
-      searchPlace.appendChild(resultDiv);
-    });
-  }
+        if (btnCloseModal) {
+          btnCloseModal.addEventListener("click", () => {
+            modal.style.display = "none";
+          });
+        }
 
-  function selectPlace(name, lat, lng) {
-    selectedPlace = name;
-    place(lat, lng, name);
-    
-    // 선택된 장소 표시 업데이트
-    const selectedPlaceText = document.getElementById('selected-place-text');
-    if (selectedPlaceText) {
-      selectedPlaceText.textContent = `현재 장소: ${name}`;
-    }
-    
-    // lat과 lng 값을 hidden input 필드에 설정
-    document.getElementById('lat').value = lat;
-    document.getElementById('lng').value = lng;
-    
-    // 모달 닫기
-    document.querySelector('.modal').style.display = 'none';
-  }
+        if (modal) {
+          modal.addEventListener("click", (e) => {
+            if (e.target === modal) {
+              modal.style.display = "none";
+            }
+          });
+        }
+      }
 
-  async function place(lat, lng, name) {
-    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
-    if (marker) {
-      marker.map = null; // 기존 마커 제거
-    }
-    marker = new AdvancedMarkerElement({
-      map,
-      position: { lat: lat, lng: lng },
-    });
-    map.setCenter({ lat: lat, lng: lng });
-    map.setZoom(15);
-  }
-</script>
+      async function searchPlace() {
+        var searchPlace = document.getElementById("search-place");
+        searchPlace.innerHTML = "";
+        var searchText = document.getElementById("place").value;
+        const { Place } = await google.maps.importLibrary("places");
+        const request = {
+          textQuery: searchText,
+          fields: ["displayName", "location", "businessStatus"],
+          locationBias: { lat: 37.5665, lng: 126.9780 },
+          language: "ko-KR",
+          maxResultCount: 8,
+        };
+        let places = [];
+        try {
+          const { places } = await Place.searchByText(request);
+        } catch (e) {
+          // 구글맵 API 호출 실패 시 무시
+        }
+        
+        // 항상 직접입력 버튼을 제일 위에 추가 (검색어로)
+        const manualDiv = document.createElement('div');
+        manualDiv.className = 'search-result';
+        manualDiv.innerHTML = `
+          <div class="place-name">'${searchText}' 직접입력</div>
+          <button class="select-btn" onclick="selectPlace('${searchText.replace(/'/g, '\'')}')">직접 선택</button>
+        `;
+        searchPlace.appendChild(manualDiv);
+
+        places.forEach(place => {
+          const resultDiv = document.createElement('div');
+          resultDiv.className = 'search-result';
+          resultDiv.innerHTML = `
+            <div class="place-name">${place.displayName}</div>
+            <button class="select-btn" onclick="selectPlace('${place.displayName}', ${place.location.lat()}, ${place.location.lng()})">선택</button>
+          `;
+          searchPlace.appendChild(resultDiv);
+        });
+      }
+
+      function selectPlace(name, lat, lng) {
+        selectedPlace = name;
+        // lat, lng가 undefined인 경우(직접입력) 서버에서 처리하도록 빈 값 전달
+        document.getElementById('lat').value = lat !== undefined ? lat : '';
+        document.getElementById('lng').value = lng !== undefined ? lng : '';
+        // 선택된 장소 표시 업데이트
+        const selectedPlaceText = document.getElementById('selected-place-text');
+        if (selectedPlaceText) {
+          selectedPlaceText.textContent = `현재 장소: ${name}`;
+        }
+        // 모달 닫기
+        document.querySelector('.modal').style.display = 'none';
+      }
+
+      async function place(lat, lng, name) {
+        const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+        if (marker) {
+          marker.map = null; // 기존 마커 제거
+        }
+        marker = new AdvancedMarkerElement({
+          map,
+          position: { lat: lat, lng: lng },
+        });
+        map.setCenter({ lat: lat, lng: lng });
+        map.setZoom(15);
+      }
+    </script>
     <style>
       body {
         margin: 0;

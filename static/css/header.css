@@ -64,3 +64,24 @@
 #header a {
   text-decoration: none;
 }
+
+.alarm-popup {
+    position: fixed;
+    top: 70px; /* 헤더 아래로 살짝 떨어지게 */
+    right: 0;
+    width: 15%;
+    height: 30vh;
+    background-color: white;
+    border-left: 2px solid #ccc;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.3s ease-in-out;
+    z-index: 1000;
+  }
+
+  .alarm-popup.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }

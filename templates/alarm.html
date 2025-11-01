@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>알림</title>
+  <meta charset="utf-8"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/btn.css') }}">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #f5f5f5;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      color: #333;
+    }
+    .alarm-container {
+      width: 90%;
+      max-width: 700px;
+      margin: 40px auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      padding: 32px 28px 28px 28px;
+    }
+    .alarm-title {
+      font-size: 1.3em;
+      font-weight: 700;
+      margin-bottom: 18px;
+      color: #333;
+      text-align: center;
+    }
+    .alarm-list {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .alarm-item {
+      background: #f8f8f8;
+      border-radius: 8px;
+      padding: 18px 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .alarm-item strong {
+      color: #222;
+      font-weight: 600;
+    }
+    .alarm-actions {
+      margin-top: 8px;
+      display: flex;
+      gap: 10px;
+    }
+    .alarm-actions button {
+      padding: 7px 18px;
+      border-radius: 6px;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .alarm-actions .approve-btn {
+      background: #333;
+      color: #fff;
+    }
+    .alarm-actions .approve-btn:hover {
+      background: #555;
+    }
+    .alarm-actions .reject-btn {
+      background: #f0f0f0;
+      color: #666;
+      border: 1px solid #e0e0e0;
+    }
+    .alarm-actions .reject-btn:hover {
+      background: #e0e0e0;
+    }
+    .footer {
+      background: #333333;
+      color: #ffffff;
+      padding: 30px 0;
+      margin-top: 60px;
+      text-align: center;
+    }
+    .footer p {
+      margin: 5px 0;
+      font-size: 14px;
+      color: #ccc;
+    }
+  </style>
+  <script src="{{ url_for('static', filename='js/header.js') }}"></script>
+</head>
+<body>
+  <div id="header"></div>
+<div class="alarm-container">
+  <div class="alarm-title">알림</div>
+  <div class="alarm-list">
+    {% if alarms %}
+      {% for alarm in alarms %}
+        <div class="alarm-item">
+          {% if alarm.type == 'join' %}
+            <div>{{ alarm.team_name }}팀에서 {{ alarm.user_name }}님이 팀 가입 신청을 보냈습니다.</div>
+            <div><strong>이메일:</strong> {{ alarm.email }}</div>
+            <div><strong>자기소개:</strong> {{ alarm.details }}</div>
+            <div class="alarm-actions">
+              <button class="approve-btn" onclick="handleDecision({{ alarm.id }}, 'approve', 'join')">승인</button>
+              <button class="reject-btn" onclick="handleDecision({{ alarm.id }}, 'reject', 'join')">거절</button>
+            </div>
+          {% elif alarm.type == 'match' %}
+            <div>{{ alarm.team_name }}팀의 {{ alarm.user_name }}님이 경기 신청을 보냈습니다.</div>
+            <div><strong>신청 내용: {{ alarm.details }}</strong></div>
+            {% if alarm.created_at %}
+              <div><small>신청일: {{ alarm.created_at.strftime('%Y-%m-%d %H:%M') }}</small></div>
+            {% endif %}
+            <div class="alarm-actions">
+              <button class="approve-btn" onclick="handleDecision({{ alarm.id }}, 'approve', 'match')">승인</button>
+              <button class="reject-btn" onclick="handleDecision({{ alarm.id }}, 'reject', 'match')">거절</button>
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    {% else %}
+      <div style="text-align:center; color:#888;">알림이 없습니다.</div>
+    {% endif %}
+  </div>
+</div>
+
+  <footer class="footer">
+    <p>© 2025년 정서윤 Copyright</p>
+    <p>전화번호: 010-1234-5678</p>
+    <p>주소: 서울시 강남구 xx동 xxx 번지</p>
+  </footer>
+  <script>
+    var isLogin = {{ isLogin | tojson }};
+    createHeader(isLogin);
+
+    // 경기신청 알림 삭제 및 메시지
+    function removeAlarm(btn, msg) {
+      alert(msg);
+      // alarm-item div를 찾아서 삭제
+      var item = btn.closest('.alarm-item');
+      if (item) item.remove();
+    }
+
+    function handleDecision(id, action, type) {
+      fetch("/handle-decision", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({id: id, action: action, type: type})
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert(data.MSG);
+        location.reload();
+      });
+    }
+  </script>
+</body>
+</html>

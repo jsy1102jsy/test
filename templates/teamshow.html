@@ -370,6 +370,8 @@
         </div>
 
         <!-- 버튼 그룹 -->
+      {% if is_leader%}
+       {% else %}
         <div class="button-group">
           <button class="join-btn" onclick="goToJoinTeam()">
             <i class="fas fa-user-plus"></i>
@@ -381,6 +383,7 @@
             경기 신청
           </button>
         </div>
+        {% endif %}
       {% else %}
         <div class="empty-message">
           <i class="fas fa-exclamation-circle"></i>

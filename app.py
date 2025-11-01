@@ -7,9 +7,13 @@ import os
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 import pymysql
+from werkzeug.security import generate_password_hash,  check_password_hash
 from models import db, User, Team, Board, JoinList, Member, Match
+from utils.alarms import get_all_alarms_for_user
+from utils.user import login, create_user
+from utils.board import create_board
 
-# City mapping dictionary to convert city names to integer codes
+
 CITY_MAP = {
     '서울': 1,
     '부산': 2,
@@ -29,7 +33,6 @@ CITY_MAP = {
     '경남': 16,
     '제주': 17
 }
-
 CITY_REVERSE_MAP = {v: k for k, v in CITY_MAP.items()}
 
 app = Flask(__name__)
@@ -55,7 +58,7 @@ def get_current_user(): #현재 로그인되어있으면 True, 그렇지않으�
     if 'username' in session :
         email = session['username']
         user = User.query.filter_by(email = email).first()
-        return user if user else redirect('/login')
+        return user if user else redirect('/login')#만약 유저가 있으면 유저를 리턴하렇지고 그 않으면 login으로 간다
     else:
         return redirect('/login')
     
@@ -121,24 +124,30 @@ def head():
         return render_template('index.html', posts = posts, isLogin = False, names=names,
                              region_filter=region_filter, date_filter=date_filter, sort_filter=sort_filter)
 
+@app.route('/alarm')
+def alarm():
+    if 'username' not in session:
+        return redirect('/login')
+    user = User.query.filter_by(email=session['username']).first()
+    if not user:
+        return redirect('/login')
+    # 팀 리더가 속한 팀 찾기
+    alarms = get_all_alarms_for_user(user)
     
+    return render_template('alarm.html', isLogin=True, alarms=alarms)
 
 @app.route('/login',methods=['POST','GET'])
 def get_form():
     if request.method == 'POST':
         email = request.form['email']
         pwd = request.form['pwname']                                                                                                                                       
-        user = User.query.filter_by(email=email).first() #뭐하는건지..달아..
-        if user and user.password == pwd:
-            session['username'] = email
+        isLogin, msg = login(email, pwd)
+        if isLogin:
             return redirect('/')
-        if user is None:
-            return render_template("login.html",msg1="해당하는 유저가 존재하지 않습니다.", isLogin = False)
-        if user.password != pwd:
-            return render_template("login.html",msg1="비밀번호가 맞지 않습니다." , isLogin = False)            
-    return render_template('login.html', isLogin=False)
-
-
+        else:
+            return render_template('login.html', msg=msg, isLogin=False)
+    else:
+        return render_template('login.html', isLogin=False)
 
 @app.route('/register',methods=['POST','GET'])
 def register():
@@ -148,22 +157,14 @@ def register():
         pw2 = request.form['passwordcheck']
         name = request.form['name']
         city = request.form['city']
-        user = User.query.filter_by(email = email).first()
-        if user:
-            return render_template("register.html",msg="이미 가입 된 아이디 입니다.", islogin = False)
-        if len(pw) < 4:
-            return render_template("register.html",msg="비밀번호 길이는 4자리 이상 입니다.", islogin = False)
-        if pw != pw2:
-            return render_template("register.html", msg="비밀번호가 틀립니다.", isLogin=False)
-        else:
-            print("회원가입 확인 성공!")
-            newuser = User(password=pw, name = name, email=email, city = city)
-            db.session.add(newuser)
-            db.session.commit()
-            print("회원가입 성공, 데이터베이스 저장 완료")
+        islogin,msg = create_user(email = email, pw = pw, pw2 = pw2, name = name, city = city)
+        if islogin:
             return redirect('/login')
-    return render_template('register.html', isLogin= False)
+        else:
+            return render_template('register.html', msg=msg, isLogin= False)
 
+       
+    return render_template('register.html', isLogin= False)
 
 @app.route('/board', methods=['GET', 'POST'])
 def board():
@@ -178,27 +179,18 @@ def board():
             city = request.form['city']
             lat = request.form['lat']
             lng = request.form['lng']
-        
-            if len(title) < 7:
-                return render_template("post.html", msg2="제목 길이는 7자리 이상 입니다.", isLogin=True)
 
-            new_board = Board(
-                date=date,
-                time=time,
-                level=level,
-                title=title,
-                detail=detail,
-                city=city,
-                lat=lat,
-                lng=lng,
-                user_id=user.id  
-            )
-            db.session.add(new_board)
-            db.session.commit()
-            return redirect('/board')
-        return render_template('post.html', isLogin=True)
-
-
+            if (not lat):
+                lat = "38"
+                lng = "38"
+            result, msg = create_board(user, date, time, level, title, detail, city, lat, lng)
+            if result:
+                return redirect("/")
+            else:
+                return render_template('post.html', msg=msg, isLogin=True)
+        else: return render_template('post.html', isLogin = True)
+    else:
+        return redirect('/login')
 
 @app.route('/getTeamList/<int:num>', methods=['GET'])
 def getTeamDetail(num):
@@ -214,18 +206,34 @@ def getTeamDetail(num):
     # 여기 users리스트에 리더를 넣어주는 로직
     if team:
         team.city_display = CITY_REVERSE_MAP.get(team.city, '미입력')
-    get_current_user()
-    return render_template('teamshow.html',team = team, isLogin = True, users = users,team_leader=team_leader)
+    now_user = get_current_user()
+    if now_user.id == team_leader.id:
+        return render_template('teamshow.html',team = team, isLogin = True, users = users,team_leader=team_leader,is_leader=True)
+        
+
+    return render_template('teamshow.html',team = team, isLogin = True, users = users,team_leader=team_leader,is_leader=False)
 
 @app.route('/getPostList/<int:num>', methods=['GET'])
 def getPostDetail(num):
-    user = get_current_user()
-    current_user_id = user.id
+    cureent_user = get_current_user()
+    current_user_id = cureent_user.id
     post = Board.query.filter_by(id=num).first()
     uid = post.user_id
     user = User.query.filter_by(id=uid).first()
-    name = user.name
-    return render_template('postshow.html', post=post, isLogin=True, name=name, current_user_id=current_user_id)
+    member = Member.query.filter_by(user_id=uid).first()
+    teamname = "팀 없음"
+    if member: 
+        team = Team.query.filter_by(id=member.team_id).first()
+        teamname = team.name if team else "팀 없음"
+    else: 
+        teamname = "팀 없음"
+    return render_template('postshow.html',
+                            post=post, 
+                            isLogin=True, 
+                            name=user.name, 
+                            current_user_id=current_user_id,
+                            teamname=teamname
+                           )
 
 @app.route('/deletePost/<int:num>', methods=['DELETE'])
 def deletePost(num):
@@ -266,7 +274,6 @@ def editPost(num):
         return redirect(f'/getPostList/{post.id}')
     
     return render_template('postreform.html', post=post, isLogin=True)
-
 
 @app.route("/teamlist", methods=['GET'])
 def teamlist():
@@ -314,14 +321,14 @@ def team():
             # 파일을 저장할 경로
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
-
+            
             print("팀을 생성 이름: " + team_name)
             print("팀을 생성하는 레벨: " + team_level)
             print("팀을 생성하는 지역: " + city)
             print("팀 인원수: ", people)
             print("팀 소개: " + detail)
             print("팀 로고: " + filename)  # filename만 출력
-
+            
             # 팀 객체를 생성할 때 filename만 저장
             city_code = CITY_MAP.get(city, 1)  # Default to Seoul (1) if city not found
             team = Team(
@@ -333,17 +340,20 @@ def team():
                 file_name=filename,  # file_path 대신 filename 사용
                 leader_id=user.id
             )
+            member = Member(team=team, user=user)
             
             db.session.add(team)
+            db.session.add(member)
             db.session.commit()
             return render_template('index.html' , isLogin = True)
+
+            
         return render_template('team.html' , isLogin = True)
 
 @app.route('/files/<filename>')
 def files(filename):
     print("CHECK")
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
-
 
 @app.route("/match-request", methods=['GET', 'POST'])
 def match_request():
@@ -391,9 +401,29 @@ def match_request():
         )
         db.session.add(match)
         db.session.commit()
-
+ 
         return jsonify({"status": "success", "MSG": "경기 신청 완료"}), 200
+   
+@app.route('/matchlist', methods=['GET'])
+def matchlist():
+    if 'username' not in session:
+        return redirect('/login')
+    user = User.query.filter_by(email=session['username']).first()
+    if not user:
+        return redirect('/login')
 
+    matches = Match.query.all()
+    match_data = []
+    for match in matches:
+        team = Team.query.filter_by(id=match.team_id).first()
+        if team and match.user_id == user.id:
+            match_data.append({
+                'id': match.id,
+                'details': match.details,
+                'team_name': team.name
+            })
+
+    return render_template('matchlist.html', matches=match_data, isLogin=True)
 
 
 @app.route('/mypage')
@@ -450,8 +480,6 @@ def leave_service():
     session.pop('username', None)
     return jsonify({'success': True, 'message': '회원 탈퇴가 완료되었습니다.'}), 200
         
-        
-
 @app.route("/join-team", methods=['POST','GET'])
 def join_team():
     if request.method == 'GET':
@@ -482,8 +510,6 @@ def join_team():
                     "MSG": "가입 성공"
                 }), 200
         
-
-
 @app.route("/userdetails", methods=["GET"]) #가입 신청 목록 확인.
 def user_details():
     if 'username' in session : #로그인 되어 있을 때
@@ -499,31 +525,48 @@ def user_details():
         return redirect('/login')
     return render_template("userdetails.html", joinlist=joinlist ,isLogin = isLogin)
 
-
 @app.route("/handle-decision", methods=["POST"])
 def handle_request():
-    curren_user = get_current_user() #현재 로그인 한 사용자(팀의 리더)
-    data = request.get_json() #Ajax HTTP 문에서 Body가져오기.
-    user_id = data.get('id') #가입 신청을 보낸 UserId 
-    action = data.get('action') #승인/거절 여부
-    join_info = JoinList.query.filter_by(id=user_id).first()
-    if join_info:
+    current_user = get_current_user()  # 오타 수정
+    if not isinstance(current_user, User):
+        return current_user  # redirect 처리
+
+    data = request.get_json()
+    request_id = data.get('id')
+    alarm_type = data.get('type')
+    action = data.get('action')
+
+    if alarm_type == 'match':
+        match_info = Match.query.filter_by(id=request_id).first()
+        if not match_info:
+            return jsonify({"status": "error", "MSG": "경기 신청을 찾을 수 없습니다."}), 404
+
+        db.session.delete(match_info)
+        db.session.commit()
+        msg = "경기 신청 승인 완료" if action == 'approve' else "경기 신청 거절 완료"
+        return jsonify({"status": "success", "MSG": msg}), 200
+
+    elif alarm_type == 'join':
+        join_info = JoinList.query.filter_by(id=request_id).first()
+        if not join_info:
+            return jsonify({"status": "error", "MSG": "가입 신청을 찾을 수 없습니다."}), 404
+
+        team = Team.query.filter_by(leader_id=current_user.id).first()
+        if not team:
+            return redirect("/")
+
         if action == 'approve':
-            db.session.delete(join_info)
-            team = Team.query.filter_by(leader_id = curren_user.id).first()
-            if team is None:
-                redirect("/")
-            member = Member(user_id = user_id, team_id = team.id)
+            member = Member(user_id=join_info.user_id, team_id=team.id)
             db.session.add(member)
+            db.session.delete(join_info)
             db.session.commit()
-            return jsonify({"status": "success", "MSG": f"가입 처리 완료 하였습니다."}), 200
+            return jsonify({"status": "success", "MSG": "가입 승인 완료"}), 200
         else:
             db.session.delete(join_info)
             db.session.commit()
-            return jsonify({"status": "success", "MSG": f"가입 거절 완료 하였습니다."}), 200
-    else:
-        return jsonify({"status": "error", "MSG": "신청을 찾을 수 없습니다."}), 404
-    
+            return jsonify({"status": "success", "MSG": "가입 거절 완료"}), 200
+
+    return jsonify({"status": "error", "MSG": "요청 유형이 잘못되었습니다."}), 400
 
 
 if __name__ == '__main__':

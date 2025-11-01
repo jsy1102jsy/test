@@ -5,7 +5,7 @@ connection = pymysql.connect(
     host='localhost',
     user='root',
     password='jsy1102!!',
-    port=3306
+    port=3306 #Mysql 포트 번호 (기본값: 3306)
 )
 
 try:
