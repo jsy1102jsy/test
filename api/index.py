@@ -8,7 +8,7 @@ from sqlalchemy import event
 from sqlalchemy.engine import Engine
 import pymysql
 from werkzeug.security import generate_password_hash,  check_password_hash
-from models import db, User, Team, Board, JoinList, Member, Match
+from api.models import db, User, Team, Board, JoinList, Member, Match
 from utils.alarms import get_all_alarms_for_user
 from utils.user import login, create_user
 from utils.board import create_board

@@ -1,5 +1,5 @@
 from app import app, db
-from models import User, Team, Board, JoinList
+from api.models import User, Team, Board, JoinList
 
 with app.app_context():
     # 모든 테이블 생성

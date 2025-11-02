@@ -1,4 +1,4 @@
-from models import User, Team, JoinList, Match
+from api.models import User, Team, JoinList, Match
 def get_created_at(alarm):
     return alarm["created_at"]
 
