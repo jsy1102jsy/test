@@ -21,6 +21,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'adnofnadoifn243AB'
 UPLOAD_FOLDER = "/tmp/files"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app = Flask(__name__, template_folder="api/templates")
+
 
 # 데이터베이스 초기화
 db.init_app(app)
@@ -567,6 +569,7 @@ def handle_request():
             return jsonify({"status": "success", "MSG": "가입 거절 완료"}), 200
 
     return jsonify({"status": "error", "MSG": "요청 유형이 잘못되었습니다."}), 400
+
 
 # if __name__ == '__main__':
 #     with app.app_context():
