@@ -19,7 +19,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://jsy1102:Jsy1102!^@13.125.208.147:3306/matchball'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'adnofnadoifn243AB'
-UPLOAD_FOLDER = os.path.join(os.getcwd(), 'files')
+UPLOAD_FOLDER = "/tmp/files"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # 데이터베이스 초기화
