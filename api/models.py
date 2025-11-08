@@ -32,7 +32,7 @@ class User(db.Model):
     memberships = db.relationship('Member', back_populates='user', cascade='all, delete')
     boards = db.relationship('Board', backref='author', cascade='all, delete', passive_deletes=True)
 
-
+user = {"id":"abc123", "name":"정서윤", "email":"test@test.com", "city":"서울"}
 
 class Board(db.Model): #Board N
     id = db.Column(db.Integer, primary_key=True)

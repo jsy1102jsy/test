@@ -540,6 +540,7 @@
     
     <script>
       var isLogin = {{ isLogin | tojson }};
+      console.log(isLogin);
       createHeader(isLogin);
 
       // 필터링 기능
@@ -574,7 +575,6 @@
         window.location.href = window.location.pathname;
       }
 
-      // 페이지 로드 시 URL 파라미터에서 필터 값 복원
       window.addEventListener('load', function() {
         const urlParams = new URLSearchParams(window.location.search);
         

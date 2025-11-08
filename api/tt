@@ -1,0 +1,22 @@
+print("팀을 생성 이름: " + team_name)
+            print("팀을 생성하는 레벨: " + team_level)
+            print("팀을 생성하는 지역: " + city)
+            print("팀 인원수: ", people)
+            print("팀 소개: " + detail)
+            print("팀 로고: " + filename)  # filename만 출력
+            
+            # 팀 객체를 생성할 때 filename만 저장
+            city_code = CITY_MAP.get(city, 1)  # Default to Seoul (1) if city not found
+            team = Team(
+                name=team_name,
+                level=team_level,
+                city=city_code,
+                people=people,
+                detail=detail,
+                file_name=filename,  # file_path 대신 filename 사용
+                leader_id=user.id
+            )
+            
+            db.session.add(team)
+            db.session.commit()
+            return render_template('index.html' , isLogin = True)

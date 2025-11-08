@@ -6,8 +6,13 @@ from api.models import db, User, Team, Board, JoinList, Member, Match
 from api.utils.alarms import get_all_alarms_for_user
 from api.utils.user import login, create_user
 from api.utils.board import create_board
+# api/index.py
+# from flask import Flask
+# app = Flask(__name__)
 
-
+# @app.route("/")
+# def home():
+#     return "Hello Flask!"
 
 
 app = Flask(__name__)
@@ -24,7 +29,8 @@ migrate = Migrate(app, db)
 # files 폴더가 없으면 생성
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
-    
+
+# MySQL에서는 외래키 제약조건이 자동으로 활성화되므로 별도 설정 불필요
 CITY_MAP = {
     '서울': 1,
     '부산': 2,
@@ -46,23 +52,17 @@ CITY_MAP = {
 }
 CITY_REVERSE_MAP = {v: k for k, v in CITY_MAP.items()}
 
-# MySQL에서는 외래키 제약조건이 자동으로 활성화되므로 별도 설정 불필요
-
-
 def get_current_user(): #현재 로그인되어있으면 True, 그렇지않으면 False를 반환하는 함수
     if 'username' in session :
         email = session['username']
         user = User.query.filter_by(email = email).first()
-        return user if user else redirect('/login')#만약 유저가 있으면 유저를 리턴하렇지고 그 않으면 login으로 간다
+        return user if user else None#만약 유저가 있으면 유저를 리턴하고 그렇지 않으면 login으로 간다
     else:
-        return redirect('/login')
+        return None
     
 
-@app.route('/',methods=['POST','GET'])
+@app.route('/',methods=['GET'])
 def head():
-    if request.method == 'POST':
-        head = request.form['head']
-    
     # 필터 파라미터 가져오기
     region_filter = request.args.get('region', '')
     date_filter = request.args.get('date', '')
@@ -111,11 +111,14 @@ def head():
     for post in posts:
         user = User.query.filter_by(id=post.user_id).first()
         names.append(user.name if user else '알 수 없음')
-    
-    if get_current_user():
-       return render_template('index.html', posts=posts, isLogin = True, names = names, 
+    user = get_current_user()
+    print(user)
+    if user:
+        print("LOGIN !!")
+        return render_template('index.html', posts=posts, isLogin = True, names = names, 
                             region_filter=region_filter, date_filter=date_filter, sort_filter=sort_filter) 
     else:
+        print("no login ")
         return render_template('index.html', posts = posts, isLogin = False, names=names,
                              region_filter=region_filter, date_filter=date_filter, sort_filter=sort_filter)
 
@@ -156,10 +159,10 @@ def register():
         if islogin:
             return redirect('/login')
         else:
-            return render_template('register.html', msg=msg, isLogin= False)
+            return render_template('user/register.html', msg=msg, isLogin= False)
 
        
-    return render_template('register.html', isLogin= False)
+    return render_template('user/register.html', isLogin= False)
 
 @app.route('/board', methods=['GET', 'POST'])
 def board():
@@ -401,12 +404,10 @@ def match_request():
    
 @app.route('/matchlist', methods=['GET'])
 def matchlist():
-    if 'username' not in session:
-        return redirect('/login')
-    user = User.query.filter_by(email=session['username']).first()
+    user = get_current_user()
     if not user:
         return redirect('/login')
-
+    
     matches = Match.query.all()
     match_data = []
     for match in matches:
@@ -417,7 +418,6 @@ def matchlist():
                 'details': match.details,
                 'team_name': team.name
             })
-
     return render_template('matchlist.html', matches=match_data, isLogin=True)
 
 
@@ -459,8 +459,11 @@ def myposts():
 
 @app.route('/logout')
 def logout():
-    session.clear()  # 세션 전체 제거
-    return redirect('/')
+    session.pop('username', None)
+    print(session.get('username'))
+    resp = redirect('/')        # 리디렉션 응답 생성
+    resp.set_cookie('session', '', expires=0)  # 세션 쿠키 삭제
+    return resp
 
 @app.route('/leave', methods=['POST'])
 def leave_service():
@@ -564,10 +567,6 @@ def handle_request():
     return jsonify({"status": "error", "MSG": "요청 유형이 잘못되었습니다."}), 400
 
 
-if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-    app.run(debug=True, host='0.0.0.0', port=80)      
 
 
 # render_template 할 때 lat랑 lng변수로 전달해서 사용자가 입력한 값의 위, 경도로 지도를 띄우기

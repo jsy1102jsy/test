@@ -1,5 +1,5 @@
-from api.models import User
-from api.models import db, Board
+from models import User
+from models import db, Board
 
 def create_board(user, date, time, level, title, detail, city, lat, lng):
     if len(title) < 7:

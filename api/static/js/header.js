@@ -42,6 +42,7 @@ function createHeader(isLogin,) {
 
   if (isLogin) {
     centerNav.appendChild(makeButtonLink('글쓰기', '/board'));
+    centerNav.appendChild(makeButtonLink('경기목록', '/matchlist'));
   }
 
   // ===== 오른쪽 버튼들 =====
@@ -56,7 +57,13 @@ function createHeader(isLogin,) {
 
     rightNav.appendChild(alarmBtn);
     rightNav.appendChild(makeButtonLink('내 정보', '/mypage'));
-    rightNav.appendChild(makeButtonLink('로그아웃', '/logout'));
+    const logoutBtn = document.createElement('button');
+    logoutBtn.textContent = '로그아웃';
+    logoutBtn.onclick = () => {
+      window.location.href = '/logout';  // 로그아웃 요청
+      setTimeout(() => window.location.reload(), 300); // 약간의 지연 후 새로고침
+    };
+    rightNav.appendChild(logoutBtn);
   } else {
     rightNav.appendChild(makeButtonLink('로그인', '/login'));
     rightNav.appendChild(makeButtonLink('회원가입', '/register'));
