@@ -1,7 +1,6 @@
-from models import User
 from flask import session
 from werkzeug.security import check_password_hash ,generate_password_hash
-from models import db
+from api.models import User, db
 
 def login(email, pwd):
     user = User.query.filter_by(email=email).first() #뭐하는건지..달아..
