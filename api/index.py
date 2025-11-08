@@ -1,3 +1,4 @@
+print("App is starting")
 from flask import Flask, render_template, redirect, request, send_from_directory, session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import Session
