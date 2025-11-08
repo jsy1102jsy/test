@@ -569,10 +569,7 @@ def handle_request():
     return jsonify({"status": "error", "MSG": "요청 유형이 잘못되었습니다."}), 400
 
 
-if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-    app.run(debug=True, host='0.0.0.0', port=80)      
+
 
 
 # render_template 할 때 lat랑 lng변수로 전달해서 사용자가 입력한 값의 위, 경도로 지도를 띄우기
