@@ -6,14 +6,6 @@ from api.models import db, User, Team, Board, JoinList, Member, Match
 from api.utils.alarms import get_all_alarms_for_user
 from api.utils.user import login, create_user
 from api.utils.board import create_board
-# api/index.py
-# from flask import Flask
-# app = Flask(__name__)
-
-# @app.route("/")
-# def home():
-#     return "Hello Flask!"
-
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://jsy1102:Jsy1102!^@13.125.208.147:3306/matchball'
