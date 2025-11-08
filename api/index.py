@@ -197,8 +197,9 @@ def board():
 @app.route('/getTeamList/<int:num>', methods=['GET'])
 def getTeamDetail(num):
     now_user = get_current_user()
-    if not isinstance(now_user, User):  # 로그인 안 된 경우
-        return now_user  # redirect('/login')
+    if not isinstance(now_user, User):
+        return redirect('/login')  # None 대신 반드시 Response 객체 반환
+ # redirect('/login')
 
     team = Team.query.filter_by(id=num).first()
     if not team:
