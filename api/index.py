@@ -21,7 +21,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'adnofnadoifn243AB'
 UPLOAD_FOLDER = "/tmp/files"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app = Flask(__name__, template_folder="api/templates")
+
 
 
 # 데이터베이스 초기화
