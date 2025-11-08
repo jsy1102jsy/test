@@ -217,25 +217,31 @@ def getTeamDetail(num):
 
 @app.route('/getPostList/<int:num>', methods=['GET'])
 def getPostDetail(num):
-    cureent_user = get_current_user()
-    current_user_id = cureent_user.id
+    current_user = get_current_user()
+    if not current_user:
+        return redirect('/login')   # 🔒 로그인 안 한 경우 로그인 페이지로 이동
+
     post = Board.query.filter_by(id=num).first()
+    if not post:
+        return "게시글을 찾을 수 없습니다.", 404
+
     uid = post.user_id
     user = User.query.filter_by(id=uid).first()
     member = Member.query.filter_by(user_id=uid).first()
     teamname = "팀 없음"
-    if member: 
+    if member:
         team = Team.query.filter_by(id=member.team_id).first()
         teamname = team.name if team else "팀 없음"
-    else: 
-        teamname = "팀 없음"
-    return render_template('postshow.html',
-                            post=post, 
-                            isLogin=True, 
-                            name=user.name, 
-                            current_user_id=current_user_id,
-                            teamname=teamname
-                           )
+
+    return render_template(
+        'postshow.html',
+        post=post,
+        isLogin=True,
+        name=user.name if user else "알 수 없음",
+        current_user_id=current_user.id,
+        teamname=teamname
+    )
+
 
 @app.route('/deletePost/<int:num>', methods=['DELETE'])
 def deletePost(num):
