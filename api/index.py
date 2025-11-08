@@ -60,16 +60,13 @@ def get_current_user(): #현재 로그인되어있으면 True, 그렇지않으�
     if 'username' in session :
         email = session['username']
         user = User.query.filter_by(email = email).first()
-        return user if user else redirect('/login')#만약 유저가 있으면 유저를 리턴하렇지고 그 않으면 login으로 간다
+        return user if user else None#만약 유저가 있으면 유저를 리턴하고 그렇지 않으면 login으로 간다
     else:
-        return redirect('/login')
+        return None
     
 
-@app.route('/',methods=['POST','GET'])
+@app.route('/',methods=['GET'])
 def head():
-    if request.method == 'POST':
-        head = request.form['head']
-    
     # 필터 파라미터 가져오기
     region_filter = request.args.get('region', '')
     date_filter = request.args.get('date', '')
@@ -118,11 +115,14 @@ def head():
     for post in posts:
         user = User.query.filter_by(id=post.user_id).first()
         names.append(user.name if user else '알 수 없음')
-    
-    if get_current_user():
-       return render_template('index.html', posts=posts, isLogin = True, names = names, 
+    user = get_current_user()
+    print(user)
+    if user:
+        print("LOGIN !!")
+        return render_template('index.html', posts=posts, isLogin = True, names = names, 
                             region_filter=region_filter, date_filter=date_filter, sort_filter=sort_filter) 
     else:
+        print("no login ")
         return render_template('index.html', posts = posts, isLogin = False, names=names,
                              region_filter=region_filter, date_filter=date_filter, sort_filter=sort_filter)
 
