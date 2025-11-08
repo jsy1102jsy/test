@@ -196,22 +196,32 @@ def board():
 
 @app.route('/getTeamList/<int:num>', methods=['GET'])
 def getTeamDetail(num):
-    team = Team.query.filter_by(id=num).first()
-    print(num)
-    members = Member.query.filter_by(team_id=num).all()
-    users = []
-    for i in range(len(members)):
-        user = User.query.filter_by(id=members[i].user_id).first()
-        users.append(user)
-    team_leader = User.query.filter_by(id = team.leader_id).first()
-    users.append(team_leader)
-    # 여기 users리스트에 리더를 넣어주는 로직
-    if team:
-        team.city_display = CITY_REVERSE_MAP.get(team.city, '미입력')
     now_user = get_current_user()
-    if now_user.id == team_leader.id:
-        return render_template('teamshow.html',team = team, isLogin = True, users = users,team_leader=team_leader,is_leader=True)
-        
+    if not isinstance(now_user, User):  # 로그인 안 된 경우
+        return now_user  # redirect('/login')
+
+    team = Team.query.filter_by(id=num).first()
+    if not team:
+        return redirect('/')
+
+    members = Member.query.filter_by(team_id=num).all()
+    users = [User.query.filter_by(id=m.user_id).first() for m in members]
+
+    team_leader = User.query.filter_by(id=team.leader_id).first()
+    users.append(team_leader)
+
+    team.city_display = CITY_REVERSE_MAP.get(team.city, '미입력')
+    is_leader = now_user.id == team_leader.id
+
+    return render_template(
+        'teamshow.html',
+        team=team,
+        isLogin=True,
+        users=users,
+        team_leader=team_leader,
+        is_leader=is_leader
+    )
+
 
     return render_template('teamshow.html',team = team, isLogin = True, users = users,team_leader=team_leader,is_leader=False)
 
