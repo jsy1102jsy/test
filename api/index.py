@@ -2,10 +2,10 @@ print("App is starting")
 from flask import Flask, render_template, redirect, request, send_from_directory, session, jsonify
 from flask_migrate import Migrate
 import os
-from api.models import db, User, Team, Board, JoinList, Member, Match
-from api.utils.alarms import get_all_alarms_for_user
-from api.utils.user import login, create_user
-from api.utils.board import create_board
+from models import db, User, Team, Board, JoinList, Member, Match
+from utils.alarms import get_all_alarms_for_user
+from utils.user import login, create_user
+from utils.board import create_board
 # api/index.py
 # from flask import Flask
 # app = Flask(__name__)
@@ -568,7 +568,10 @@ def handle_request():
 
     return jsonify({"status": "error", "MSG": "요청 유형이 잘못되었습니다."}), 400
 
-
+# if __name__ == '__main__':
+#     with app.app_context():
+#         db.create_all()
+#     app.run(debug=True, host='0.0.0.0', port=80)    
 
 
 
