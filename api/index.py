@@ -6,6 +6,14 @@ from api.models import db, User, Team, Board, JoinList, Member, Match
 from api.utils.alarms import get_all_alarms_for_user
 from api.utils.user import login, create_user
 from api.utils.board import create_board
+# api/index.py
+# from flask import Flask
+# app = Flask(__name__)
+
+# @app.route("/")
+# def home():
+#     return "Hello Flask!"
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://jsy1102:Jsy1102!^@13.125.208.147:3306/matchball'
@@ -18,9 +26,11 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 db.init_app(app)
 migrate = Migrate(app, db)
 
-
+# files 폴더가 없으면 생성
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
+
+# MySQL에서는 외래키 제약조건이 자동으로 활성화되므로 별도 설정 불필요
 
 
 CITY_MAP = {
@@ -469,24 +479,6 @@ def leave_service():
     db.session.commit()
     session.pop('username', None)
     return jsonify({'success': True, 'message': '회원 탈퇴가 완료되었습니다.'}), 200
-
-@app.route('/matchlist', methods=['GET'])
-def matchlist():
-    user = get_current_user()
-    if not user:
-        return redirect('/login')
-    
-    matches = Match.query.all()
-    match_data = []
-    for match in matches:
-        team = Team.query.filter_by(id=match.team_id).first()
-        if team and match.user_id == user.id:
-            match_data.append({
-                'id': match.id,
-                'details': match.details,
-                'team_name': team.name
-            })
-    return render_template('matchlist.html', matches=match_data, isLogin=True)
         
 @app.route("/join-team", methods=['POST','GET'])
 def join_team():
