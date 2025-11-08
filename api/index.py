@@ -1,19 +1,30 @@
-from flask import Flask, render_template, redirect, request, send_from_directory, session
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import Session
+print("App is starting")
+from flask import Flask, render_template, redirect, request, send_from_directory, session, jsonify
 from flask_migrate import Migrate
-from flask import Flask, request, jsonify
 import os
-from sqlalchemy import event
-from sqlalchemy.engine import Engine
-import pymysql
-from werkzeug.security import generate_password_hash,  check_password_hash
 from api.models import db, User, Team, Board, JoinList, Member, Match
-from utils.alarms import get_all_alarms_for_user
-from utils.user import login, create_user
-from utils.board import create_board
+from api.utils.alarms import get_all_alarms_for_user
+from api.utils.user import login, create_user
+from api.utils.board import create_board
 
 
+
+
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://jsy1102:Jsy1102!^@13.125.208.147:3306/matchball'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.secret_key = 'adnofnadoifn243AB'
+UPLOAD_FOLDER = "/tmp/files"
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# 데이터베이스 초기화
+db.init_app(app)
+migrate = Migrate(app, db)
+
+# files 폴더가 없으면 생성
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+    
 CITY_MAP = {
     '서울': 1,
     '부산': 2,
@@ -34,23 +45,6 @@ CITY_MAP = {
     '제주': 17
 }
 CITY_REVERSE_MAP = {v: k for k, v in CITY_MAP.items()}
-
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://jsy1102jsy:Jsy1102!^@13.125.208.147:3306/matchball'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-UPLOAD_FOLDER = "/tmp/files"
-app.secret_key = 'adnofnadoifn243AB'
-
-UPLOAD_FOLDER = os.path.join(os.getcwd(), 'files')
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-# 데이터베이스 초기화
-db.init_app(app)
-migrate = Migrate(app, db)
-
-# files 폴더가 없으면 생성
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
 
 # MySQL에서는 외래키 제약조건이 자동으로 활성화되므로 별도 설정 불필요
 
