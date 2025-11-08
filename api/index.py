@@ -9,7 +9,6 @@ from api.utils.board import create_board
 # api/index.py
 from flask import Flask
 app = Flask(__name__)
-<<<<<<< HEAD
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://jsy1102:Jsy1102!^@13.125.208.147:3306/matchball'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'adnofnadoifn243AB'
@@ -61,71 +60,7 @@ def head():
     region_filter = request.args.get('region', '')
     date_filter = request.args.get('date', '')
     sort_filter = request.args.get('sort', 'latest')
-=======
 
-@app.route("/")
-def home():
-    return "Hello Flask!"
-
-
-# app = Flask(__name__)
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://jsy1102:Jsy1102!^@13.125.208.147:3306/matchball'
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-# app.secret_key = 'adnofnadoifn243AB'
-# UPLOAD_FOLDER = os.path.join(os.getcwd(), 'files')
-# app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-# # 데이터베이스 초기화
-# db.init_app(app)
-# migrate = Migrate(app, db)
-
-# # files 폴더가 없으면 생성
-# if not os.path.exists(UPLOAD_FOLDER):
-#     os.makedirs(UPLOAD_FOLDER)
-
-# # MySQL에서는 외래키 제약조건이 자동으로 활성화되므로 별도 설정 불필요
-
-
-# CITY_MAP = {
-#     '서울': 1,
-#     '부산': 2,
-#     '대구': 3,
-#     '인천': 4,
-#     '광주': 5,
-#     '대전': 6,
-#     '울산': 7,
-#     '세종': 8,
-#     '경기': 9,
-#     '강원': 10,
-#     '충북': 11,
-#     '충남': 12,
-#     '전북': 13,
-#     '전남': 14,
-#     '경북': 15,
-#     '경남': 16,
-#     '제주': 17
-# }
-# CITY_REVERSE_MAP = {v: k for k, v in CITY_MAP.items()}
-
-# def get_current_user(): #현재 로그인되어있으면 True, 그렇지않으면 False를 반환하는 함수
-#     if 'username' in session :
-#         email = session['username']
-#         user = User.query.filter_by(email = email).first()
-#         return user if user else redirect('/login')#만약 유저가 있으면 유저를 리턴하렇지고 그 않으면 login으로 간다
-#     else:
-#         return redirect('/login')
-    
-
-# @app.route('/',methods=['POST','GET'])
-# def head():
-#     if request.method == 'POST':
-#         head = request.form['head']
-    
-#     # 필터 파라미터 가져오기
-#     region_filter = request.args.get('region', '')
-#     date_filter = request.args.get('date', '')
-#     sort_filter = request.args.get('sort', 'latest')
->>>>>>> parent of 36e2b21 (Update index.py)
     
 #     # 기본 쿼리
 #     query = Board.query
