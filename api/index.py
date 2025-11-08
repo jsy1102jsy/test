@@ -36,7 +36,7 @@ CITY_MAP = {
 CITY_REVERSE_MAP = {v: k for k, v in CITY_MAP.items()}
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:jsy1102!!@localhost:3306/matchball'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://jsy1102:Jsy1102!^@13.125.208.147:3306/matchball'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'adnofnadoifn243AB'
 
