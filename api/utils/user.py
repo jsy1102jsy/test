@@ -14,20 +14,18 @@ def login(email, pwd):
 
 
 def create_user(email,pw,pw2,name,city):
-    user = User.query.filter_by(email = email).first()
-    
-    hashed_password = generate_password_hash(pw)
-    
-    if user:
-        return False, "이미 가입 된 아이디 입니다."
-    if len(pw) < 4:
+    user=User.query.filter_by(email=email).first()   #이미 가입된 이메일인지 확인
+    hashed_password=generate_password_hash(pw)
+    if user:   #중복 회원이면 실패
+        return False,"이미 가입 된 아이디 입니다."
+    if len(pw)<4:  #비밀번호 길이 체크
         return False,"비밀번호 길이는 4자리 이상 입니다."
-    if pw != pw2:
+    if pw!=pw2:   #비밀번호 확인 불일치
         return False,"비밀번호가 틀립니다."
     else:
         print("회원가입 확인 성공!")
-        newuser = User(password= hashed_password, name = name, email=email, city = city)
-        db.session.add(newuser)
-        db.session.commit()
+        newuser=User(password=hashed_password,name=name,email=email,city=city)  #새 유저 객체
+        db.session.add(newuser)  #DB에 추가
+        db.session.commit()#커밋(저장)
         print("회원가입 성공, 데이터베이스 저장 완료")
-        return True, None
+        return True,None

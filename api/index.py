@@ -320,52 +320,52 @@ def teamlist():
 def team():
     user = get_current_user()
     if not isinstance(user, User):
-        return user  # redirect('/login') 반환됨
+        return redirect('/login')
 
-    if user:
-        if request.method == 'POST':
-            if 'file' not in request.files:
-                return 'No file part'
-            team_name = request.form['teamname']
-            team_level = request.form['level']
-            city = request.form['city']
-            people = int(request.form['people'])
-            detail = request.form['detail']
-            file = request.files['file']
-            
-            # 파일 이름만 가져오기
-            filename = file.filename
-            # 파일을 저장할 경로
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.save(file_path)
-            
-            print("팀을 생성 이름: " + team_name)
-            print("팀을 생성하는 레벨: " + team_level)
-            print("팀을 생성하는 지역: " + city)
-            print("팀 인원수: ", people)
-            print("팀 소개: " + detail)
-            print("팀 로고: " + filename)  # filename만 출력
-            
-            # 팀 객체를 생성할 때 filename만 저장
-            city_code = CITY_MAP.get(city, 1)  # Default to Seoul (1) if city not found
-            team = Team(
-                name=team_name,
-                level=team_level,
-                city=city_code,
-                people=people,
-                detail=detail,
-                file_name=filename,  # file_path 대신 filename 사용
-                leader_id=user.id
-            )
-            member = Member(team=team, user=user)
-            
-            db.session.add(team)
-            db.session.add(member)
-            db.session.commit()
-            return render_template('index.html' , isLogin = True)
+    if request.method == 'POST':
+        # 1. 이미 팀 리더인지 확인
+        existing_team = Team.query.filter_by(leader_id=user.id).first()
+        if existing_team:
+            return render_template('team.html', isLogin=True, msg="이미 팀 리더입니다.")
+        
+        # 2. 파일 업로드 확인
+        if 'file' not in request.files:
+            return render_template('team.html', isLogin=True, msg="팀 로고 파일이 필요합니다.")
+        
+        team_name = request.form['teamname']
+        team_level = request.form['level']
+        city = request.form['city']
+        people = int(request.form['people'])
+        detail = request.form['detail']
+        file = request.files['file']
 
-            
-        return render_template('team.html' , isLogin = True)
+        # 파일 이름만 저장
+        filename = file.filename
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(file_path)
+
+        # 팀 객체 생성
+        city_code = CITY_MAP.get(city, 1)  # Default: 서울
+        team = Team(
+            name=team_name,
+            level=team_level,
+            city=city_code,
+            people=people,
+            detail=detail,
+            file_name=filename,
+            leader_id=user.id
+        )
+        member = Member(team=team, user=user)
+
+        db.session.add(team)
+        db.session.add(member)
+        db.session.commit()
+
+        return render_template('index.html', isLogin=True)
+
+    # GET 요청 시
+    return render_template('team.html', isLogin=True)
+
 
 @app.route('/files/<filename>')
 def files(filename):
