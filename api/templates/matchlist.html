@@ -53,26 +53,34 @@
   <script src="{{ url_for('static', filename='js/header.js') }}"></script>
 </head>
 <body>
+  <!-- JS로 생성될 헤더 영역 -->
   <div id="header"></div>
+
+  <!-- 경기 목록 컨테이너 -->
   <div class="container">
     <h1>경기 목록</h1>
+
+    <!-- 경기 리스트 영역 -->
     <div class="match-list">
       {% if matches %}
+        <!-- 경기 데이터가 있을 경우 반복 렌더링 -->
         {% for match in matches %}
           <div class="match-item">
-            <h3>{{ match.team_name }}</h3>
-            <p>{{ match.details }}</p>
+            <h3>{{ match.team_name }}</h3> <!-- 팀 이름 표시 -->
+            <p>{{ match.details }}</p>       <!-- 경기 상세 내용 표시 -->
           </div>
         {% endfor %}
       {% else %}
+        <!-- 경기 데이터가 없을 경우 표시 -->
         <p style="text-align:center; color:#888;">아직 신청한 경기가 없습니다.</p>
       {% endif %}
     </div>
   </div>
+
+  <!-- 로그인 상태 변수 전달 및 헤더 생성 -->
   <script>
-    var isLogin = {{ isLogin | tojson }};
+    var isLogin = {{ isLogin | tojson }}; // Flask에서 전달된 로그인 상태를 JS 변수로
     console.log(isLogin);
-    createHeader(isLogin);
+    createHeader(isLogin);                 // 로그인 상태에 맞춰 헤더 생성
   </script>
 </body>
-</html>

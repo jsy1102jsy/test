@@ -3,7 +3,7 @@ import pymysql
 import time
 
 def register_users():
-    url = "http://127.0.0.1:80/register"
+    url = "https://test-ten-henna.vercel.app/register"
     session = requests.Session()
     user_num = 1
 
@@ -27,7 +27,7 @@ def register_users():
             user_num += 1
 
 def assign_teams():
-    conn = pymysql.connect(host='localhost', user='root', password='jsy1102!!', db='matchball', charset='utf8')
+    conn = pymysql.connect(host='13.125.208.147', user='jsy1102', password='Jsy1102!^', db='matchball', charset='utf8')
     cur = conn.cursor()
 
     # 기존 데이터 정리

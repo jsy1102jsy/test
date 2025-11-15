@@ -333,7 +333,11 @@
       <h1><i class="fas fa-users"></i> 팀 정보</h1>
       {% if team %}
         <div class="team-header">
+          {% if team.file_name %}
           <img src="{{ url_for('files', filename=team.file_name) }}" alt="팀 로고" class="logo-img"/>
+          {% else %}
+          <img src="{{ url_for('static', filename='images/Match_Ball.png') }}" alt="기본 로고" class="logo-img"/>
+          {% endif %}
           <h2 class="team_name">{{team.name}}</h2>
         </div>
 
