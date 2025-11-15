@@ -70,10 +70,16 @@ class Member(db.Model):
     user = db.relationship('User', back_populates='memberships')
 
 class Match(db.Model):
+    __tablename__ = 'match'
+
     id = db.Column(db.Integer, primary_key=True)
-    team_id = db.Column(db.Integer, db.ForeignKey('team.id'))
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    details = db.Column(db.String(500))
+    request_team_id = db.Column(db.Integer, db.ForeignKey('team.id'), nullable=False)  
+    opponent_team_id = db.Column(db.Integer, db.ForeignKey('team.id'), nullable=False) 
+    request_team_score = db.Column(db.Integer, default=0)  
+    opponent_team_score = db.Column(db.Integer, default=0) 
+    details = db.Column(db.String(500))                    
+    isEnd = db.Column(db.Boolean, default=False)        
+    match_datetime = db.Column(db.DateTime, nullable=True)
     created_at = db.Column(db.DateTime, default=db.func.now())
 
 

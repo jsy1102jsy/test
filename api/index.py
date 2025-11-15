@@ -372,6 +372,7 @@ def files(filename):
     print("CHECK")
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
+
 @app.route("/match-request", methods=['GET', 'POST'])
 def match_request():
     if 'username' not in session:
@@ -381,8 +382,7 @@ def match_request():
     if not user:
         return redirect('/login')
 
-    # 사용자가 속한 팀 확인
-    # 리더팀 또는 멤버팀 중 하나라도 존재하면 user_team에 저장
+    # 사용자가 속한 팀 확인 (리더팀 또는 멤버팀)
     user_team = Team.query.filter_by(leader_id=user.id).first()
     if not user_team:
         membership = Member.query.filter_by(user_id=user.id).first()
@@ -406,21 +406,25 @@ def match_request():
         details = data.get('details')
         teamName = data.get('teamName')
 
-        team = Team.query.filter_by(name=teamName).first()
-        if not team:
+        opponent_team = Team.query.filter_by(name=teamName).first()
+        if not opponent_team:
             return jsonify({"status": "error", "MSG": "상대 팀을 찾을 수 없습니다."}), 404
 
-        # 경기 신청 저장
+        # 경기 신청 저장 (새 Match 모델 기준)
         match = Match(
-            team_id=team.id,
-            user_id=user.id,
+            request_team_id=user_team.id,
+            opponent_team_id=opponent_team.id,
+            request_team_score=0,
+            opponent_team_score=0,
             details=details,
+            isEnd=False,
+            match_datetime=None  # 필요시 입력 가능
         )
         db.session.add(match)
         db.session.commit()
- 
+
         return jsonify({"status": "success", "MSG": "경기 신청 완료"}), 200
-   
+
 @app.route('/matchlist', methods=['GET'])
 def matchlist():
     if 'username' not in session:

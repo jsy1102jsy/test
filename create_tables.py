@@ -88,13 +88,18 @@ queries = [
     """
     CREATE TABLE IF NOT EXISTS `match` (
         id INT AUTO_INCREMENT PRIMARY KEY,
-        team_id INT,
-        user_id INT,
+        request_team_id INT NOT NULL,
+        opponent_team_id INT NOT NULL,
+        request_team_score INT DEFAULT 0,
+        opponent_team_score INT DEFAULT 0,
         details VARCHAR(500),
+        isEnd BOOLEAN DEFAULT FALSE,
+        match_datetime DATETIME NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (team_id) REFERENCES team(id),
-        FOREIGN KEY (user_id) REFERENCES user(id)
-    )
+        FOREIGN KEY (request_team_id) REFERENCES team(id) ON DELETE CASCADE,
+        FOREIGN KEY (opponent_team_id) REFERENCES team(id) ON DELETE CASCADE
+    );
+
     """,
     
     """
