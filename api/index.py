@@ -438,7 +438,8 @@ def matchlist():
     match_data = []
     for match in matches:
         request_team_name = Team.query.filter_by(id=match.request_team_id).first().name
-        opponent_team_name = Team.query.filter_by(id=match.opponent_team_id).first().name        match_data.append({
+        opponent_team_name = Team.query.filter_by(id=match.opponent_team_id).first().name        
+        match_data.append({
             'team1': request_team_name,
             'team2': opponent_team_name,
             'score1': match.request_team_score,
