@@ -5,27 +5,35 @@ def get_created_at(alarm):
 def get_all_alarms_for_user(user: User):
     team = Team.query.filter_by(leader_id=user.id).first()
     alarms = []
+
     if team:
         # 팀 가입 신청 목록 (최신순)
         joinlist = JoinList.query.filter_by(team_id=team.id).order_by(JoinList.id.desc()).all()
         for req in joinlist:
             alarms.append({
                 "type": "join",
-                "created_at": req.created_at,  # id 대신 created_at을 넣는다.
+                "created_at": req.created_at,
                 "email": req.email,
                 "details": req.details,
                 "id": req.id
             })
+
         # 경기 신청 목록 (최신순)
-        matchlist = Match.query.filter_by(team_id=team.id).order_by(Match.id.desc()).all()
+        matchlist = Match.query.filter_by(request_team_id=team.id).order_by(Match.id.desc()).all()
         for match in matchlist:
-            user_name = User.query.filter_by(id=match.user_id).first().name if match.user_id else "알 수 없음"
+            opponent_team_name = Team.query.get(match.opponent_team_id).name if match.opponent_team_id else "알 수 없음"
             alarms.append({
                 "type": "match",
-                "created_at": match.created_at if hasattr(match, "created_at") else match.id,
-                "user_name": user_name,
+                "created_at": match.created_at,
+                "request_team_score": match.request_team_score,
+                "opponent_team_score": match.opponent_team_score,
+                "opponent_team_name": opponent_team_name,
                 "details": match.details,
-                "id": match.id
+                "id": match.id,
+                "isEnd": match.isEnd
             })
+
+        # 생성일 기준 정렬
         alarms.sort(key=get_created_at, reverse=True)
-        return alarms
+
+    return alarms
