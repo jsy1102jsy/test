@@ -224,8 +224,6 @@ def getTeamDetail(num):
     )
 
 
-    return render_template('teamshow.html',team = team, isLogin = True, users = users,team_leader=team_leader,is_leader=False)
-
 @app.route('/getPostList/<int:num>', methods=['GET'])
 def getPostDetail(num):
     current_user = get_current_user()

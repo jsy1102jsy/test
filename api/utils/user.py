@@ -7,8 +7,7 @@ def login(email, pwd):
     if user is None:
         return False, "해당하는 유저가 존재하지 않습니다."
     if user and check_password_hash(user.password, pwd):
-        session['username'] = email
-        session['zzzz'] = "abcdef"
+        session['username'] = email  #로그인한 사용자 이메일을 세션에 저장(로그인 상태 유지)
         return True, None
     else:
         return False, "비밀번호가 일치하지 않습니다."
