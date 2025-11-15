@@ -108,7 +108,7 @@
               <button class="reject-btn" onclick="handleDecision({{ alarm.id }}, 'reject', 'join')">거절</button>
             </div>
           {% elif alarm.type == 'match' %}
-            <div>{{ alarm.opponent_team_name }}팀이 경기 신청을 보냈습니다.</div>
+            <div>{{ alarm.request_team_name }}팀이 경기 신청을 보냈습니다.</div>
             <div><strong>신청 내용: {{ alarm.details }}</strong></div>
             {% if alarm.created_at %}
               <div><small>신청일: {{ alarm.created_at.strftime('%Y-%m-%d %H:%M') }}</small></div>
