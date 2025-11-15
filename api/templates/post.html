@@ -131,9 +131,10 @@
       }
 
       async function searchPlace() {
-        var searchPlace = document.getElementById("search-place");
-        searchPlace.innerHTML = "";
-        var searchText = document.getElementById("place").value;
+        const searchPlaceDiv = document.getElementById("search-place");
+        searchPlaceDiv.innerHTML = "";
+        const searchText = document.getElementById("place").value;
+
         const { Place } = await google.maps.importLibrary("places");
         const request = {
           textQuery: searchText,
@@ -142,30 +143,33 @@
           language: "ko-KR",
           maxResultCount: 8,
         };
+
         let places = [];
         try {
-          const { places } = await Place.searchByText(request);
+          const result = await Place.searchByText(request);
+          places = result.places || [];
         } catch (e) {
-          // 구글맵 API 호출 실패 시 무시
+          console.error(e);
         }
-        
-        // 항상 직접입력 버튼을 제일 위에 추가 (검색어로)
-        const manualDiv = document.createElement('div');
-        manualDiv.className = 'search-result';
+
+        // 항상 직접입력 버튼 제일 위에
+        const manualDiv = document.createElement("div");
+        manualDiv.className = "search-result";
         manualDiv.innerHTML = `
           <div class="place-name">'${searchText}' 직접입력</div>
-          <button class="select-btn" onclick="selectPlace('${searchText.replace(/'/g, '\'')}')">직접 선택</button>
+          <button class="select-btn" onclick="selectPlace('${searchText.replace(/'/g,"\\'")}')">직접 선택</button>
         `;
-        searchPlace.appendChild(manualDiv);
+        searchPlaceDiv.appendChild(manualDiv);
 
+        // 검색 결과 표시
         places.forEach(place => {
-          const resultDiv = document.createElement('div');
-          resultDiv.className = 'search-result';
+          const resultDiv = document.createElement("div");
+          resultDiv.className = "search-result";
           resultDiv.innerHTML = `
             <div class="place-name">${place.displayName}</div>
             <button class="select-btn" onclick="selectPlace('${place.displayName}', ${place.location.lat()}, ${place.location.lng()})">선택</button>
           `;
-          searchPlace.appendChild(resultDiv);
+          searchPlaceDiv.appendChild(resultDiv);
         });
       }
 
