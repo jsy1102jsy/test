@@ -71,7 +71,6 @@ class Member(db.Model):
 
 class Match(db.Model):
     __tablename__ = 'match'
-
     id = db.Column(db.Integer, primary_key=True)
     request_team_id = db.Column(db.Integer, db.ForeignKey('team.id'), nullable=False)  
     opponent_team_id = db.Column(db.Integer, db.ForeignKey('team.id'), nullable=False) 
@@ -81,6 +80,7 @@ class Match(db.Model):
     isEnd = db.Column(db.Boolean, default=False)        
     match_datetime = db.Column(db.DateTime, nullable=True)
     created_at = db.Column(db.DateTime, default=db.func.now())
+    is_accept = db.Column(db.Boolean, default=False)    # 승인 여부 추가
 
 
 

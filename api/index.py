@@ -418,7 +418,8 @@ def match_request():
             opponent_team_score=0,
             details=details,
             isEnd=False,
-            match_datetime=None  # 필요시 입력 가능
+            match_datetime=None,
+            is_accept = False
         )
         db.session.add(match)
         db.session.commit()
@@ -566,9 +567,18 @@ def handle_request():
         if not match_info:
             return jsonify({"status": "error", "MSG": "경기 신청을 찾을 수 없습니다."}), 404
 
-        db.session.delete(match_info)
-        db.session.commit()
-        msg = "경기 신청 승인 완료" if action == 'approve' else "경기 신청 거절 완료"
+        if action == 'approve':
+            match_info.is_accept = True
+            db.session.add(match_info)
+            db.session.commit()
+            msg = "경기 신청 승인 완료"
+        elif action == 'reject':
+            db.session.delete(match_info)
+            db.session.commit()
+            msg = "경기 신청 거절 완료"
+        else:
+            return jsonify({"status": "error", "MSG": "잘못된 요청입니다."}), 400
+
         return jsonify({"status": "success", "MSG": msg}), 200
 
     elif alarm_type == 'join':

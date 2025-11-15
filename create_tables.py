@@ -96,6 +96,7 @@ queries = [
         isEnd BOOLEAN DEFAULT FALSE,
         match_datetime DATETIME NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        is_accept BOOLEAN DEFAULT FALSE,
         FOREIGN KEY (request_team_id) REFERENCES team(id) ON DELETE CASCADE,
         FOREIGN KEY (opponent_team_id) REFERENCES team(id) ON DELETE CASCADE
     );

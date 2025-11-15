@@ -16,9 +16,9 @@ def get_all_alarms_for_user(user: User):
                 "details": req.details,
                 "id": req.id
             })
-        matchlist = Match.query.filter_by(opponent_team_id=team.id).order_by(Match.id.desc()).all()
+        matchlist = Match.query.filter_by(opponent_team_id=team.id, is_accept=False).order_by(Match.id.desc()).all()
         for match in matchlist:
-            request_team_name = Team.query.get(match.request_team_id).name if match.opponent_team_id else "알 수 없음"
+            request_team_name = Team.query.get(match.request_team_id).name if match.request_team_id else "알 수 없음"
             alarms.append({
                 "type": "match",
                 "created_at": match.created_at,
@@ -28,7 +28,6 @@ def get_all_alarms_for_user(user: User):
                 "isEnd": match.isEnd
             })
 
-        # 생성일 기준 정렬
         alarms.sort(key=get_created_at, reverse=True)
 
     return alarms
