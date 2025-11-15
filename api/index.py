@@ -438,16 +438,14 @@ def matchlist():
     match_data = []
     for match in matches:
         request_team_name = Team.query.filter_by(id=match.request_team_id).first().name
-        opponent_team_name = Team.query.filter_by(id=match.opponent_team_id).first().name
-        if team and match.user_id == user.id:
-            match_data.append({
-                'team1': request_team_name,
-                'team2': opponent_team_name,
-                'score1': match.request_team_score,
-                'score2': match.opponent_team_score,
-                'isEnd': match.isEnd,
-                'match_datetime': match.match_datetime
-            })
+        opponent_team_name = Team.query.filter_by(id=match.opponent_team_id).first().name        match_data.append({
+            'team1': request_team_name,
+            'team2': opponent_team_name,
+            'score1': match.request_team_score,
+            'score2': match.opponent_team_score,
+            'isEnd': match.isEnd,
+            'match_datetime': match.match_datetime
+        })
 
     return render_template('matchlist.html', matches=match_data, isLogin=True)
 
