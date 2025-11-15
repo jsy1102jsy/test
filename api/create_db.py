@@ -2,9 +2,9 @@ import pymysql
 
 # MySQL 연결 설정
 connection = pymysql.connect(
-    host='localhost',
-    user='root',
-    password='jsy1102!!',
+    host='13.125.208.147',
+    user='jsy1102',
+    password='Jsy1102!^',
     port=3306 #Mysql 포트 번호 (기본값: 3306)
 )
 

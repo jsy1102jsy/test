@@ -1,12 +1,107 @@
-from app import app, db
-from models import User, Team, Board, JoinList
+import pymysql
 
-with app.app_context():
-    # 모든 테이블 생성
-    db.create_all()
-    print("모든 테이블이 성공적으로 생성되었습니다!")
-    
-    # 생성된 테이블 확인
-    print("\n생성된 테이블:")
-    for table in db.metadata.tables:
-        print(f"- {table}") 
+# MySQL 연결
+conn = pymysql.connect(
+    host='13.125.208.147',
+    user='jsy1102',
+    password='Jsy1102!^',
+    database='matchball',
+    charset='utf8mb4',
+    autocommit=True
+)
+cur = conn.cursor()
+
+# 테이블 생성 쿼리
+queries = [
+
+    # User 테이블
+    """
+    CREATE TABLE IF NOT EXISTS user (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        password VARCHAR(300) NOT NULL,
+        name VARCHAR(30) NOT NULL,
+        email VARCHAR(30) NOT NULL,
+        city VARCHAR(30) NOT NULL
+    )
+    """,
+
+    # Team 테이블
+    """
+    CREATE TABLE IF NOT EXISTS team (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(30) NOT NULL,
+        level VARCHAR(20) NOT NULL,
+        city INT NOT NULL,
+        people INT NOT NULL,
+        detail VARCHAR(300),
+        file_name VARCHAR(100),
+        leader_id INT UNIQUE NOT NULL,
+        FOREIGN KEY (leader_id) REFERENCES user(id) ON DELETE CASCADE
+    )
+    """,
+
+    # Board 테이블
+    """
+    CREATE TABLE IF NOT EXISTS board (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        date VARCHAR(15) NOT NULL,
+        time VARCHAR(15) NOT NULL,
+        level VARCHAR(15) NOT NULL,
+        title VARCHAR(100) NOT NULL,
+        detail VARCHAR(300) NOT NULL,
+        city VARCHAR(30) NOT NULL,
+        user_id INT NOT NULL,
+        lat FLOAT,
+        lng FLOAT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
+    )
+    """,
+
+    # JoinList 테이블
+    """
+    CREATE TABLE IF NOT EXISTS joinlist (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        email VARCHAR(30) NOT NULL,
+        details VARCHAR(300) NOT NULL,
+        team_id INT NOT NULL,
+        user_id INT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (team_id) REFERENCES team(id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
+    )
+    """,
+
+    # Member 테이블
+    """
+    CREATE TABLE IF NOT EXISTS member (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        team_id INT,
+        user_id INT,
+        FOREIGN KEY (team_id) REFERENCES team(id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
+    )
+    """,
+
+    # Match 테이블
+    """
+    CREATE TABLE IF NOT EXISTS `match` (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        team_id INT,
+        user_id INT,
+        details VARCHAR(500),
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (team_id) REFERENCES team(id),
+        FOREIGN KEY (user_id) REFERENCES user(id)
+    )
+    """
+]
+
+# 쿼리 실행
+for q in queries:
+    cur.execute(q)
+    print("테이블 생성 완료 혹은 이미 존재함.")
+
+cur.close()
+conn.close()
