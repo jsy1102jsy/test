@@ -95,6 +95,19 @@ queries = [
         FOREIGN KEY (team_id) REFERENCES team(id),
         FOREIGN KEY (user_id) REFERENCES user(id)
     )
+    """,
+    
+    """
+        CREATE TABLE IF NOT EXISTS joinlist (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        email VARCHAR(30) NOT NULL,
+        details VARCHAR(300) NOT NULL,
+        team_id INT NOT NULL,
+        user_id INT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (team_id) REFERENCES team(id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
+    );
     """
 ]
 

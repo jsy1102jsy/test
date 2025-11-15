@@ -51,12 +51,15 @@ class Board(db.Model): #Board N
 
 #가입 신청 대기열
 class JoinList(db.Model):
+    __tablename__ = 'joinlist'
+
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(30), nullable=False)
     details = db.Column(db.String(300), nullable=False)    
-    team_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
+    team_id = db.Column(db.Integer, db.ForeignKey('team.id', ondelete='CASCADE'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), nullable=False)
-    created_at = db.Column(db.DateTime, default=db.func.now()) 
+    created_at = db.Column(db.DateTime, default=db.func.now())
+ 
     
 class Member(db.Model):
     """ User - Team 다대다 관계를 풀어내는 테이블 """
